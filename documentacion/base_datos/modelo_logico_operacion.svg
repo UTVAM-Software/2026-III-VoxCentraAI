@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1242" viewBox="0 0 1760 1242" role="img" aria-labelledby="title desc">
+<title id="title">Modelo lógico: clientes, interacciones y pedidos</title>
+<desc id="desc">Tablas relacionales con columnas y referencias de llaves primarias y foráneas.</desc>
+<rect width="100%" height="100%" fill="#f5f7fb"/>
+<text x="55" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#17365d">Modelo lógico: clientes, interacciones y pedidos</text>
+<text x="55" y="84" font-family="Arial, sans-serif" font-size="15" fill="#475569">PK = llave primaria · FK = llave foránea · Tipos lógicos mapeados a campos de Django</text>
+<rect x="55" y="105" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 105 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">CLIENTE</text>
+<text x="71" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_cliente BIGINT — PK</text>
+<text x="71" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="71" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(160)</text>
+<text x="71" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">telefono VARCHAR(25) NULL</text>
+<text x="71" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">correo VARCHAR(254) NULL</text>
+<text x="71" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<rect x="616" y="105" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M626 105 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="632" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">DIRECCION_CLIENTE</text>
+<text x="632" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_direccion BIGINT — PK</text>
+<text x="632" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_cliente BIGINT — FK -&gt; CLIENTE.id_cliente</text>
+<text x="632" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">alias VARCHAR(60)</text>
+<text x="632" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">calle VARCHAR(160)</text>
+<text x="632" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">numero_exterior VARCHAR(20)</text>
+<text x="632" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">numero_interior VARCHAR(20) NULL</text>
+<text x="632" y="320" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">colonia VARCHAR(120)</text>
+<text x="632" y="345" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">ciudad VARCHAR(120)</text>
+<text x="632" y="370" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">codigo_postal VARCHAR(12) NULL</text>
+<text x="632" y="395" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">referencias TEXT NULL</text>
+<text x="632" y="420" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">predeterminada BOOLEAN</text>
+<rect x="1177" y="105" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M1187 105 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="1193" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">INTERACCION</text>
+<text x="1193" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_interaccion BIGINT — PK</text>
+<text x="1193" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="1193" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_sucursal BIGINT NULL — FK -&gt; SUCURSAL</text>
+<text x="1193" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_cliente BIGINT NULL — FK -&gt; CLIENTE</text>
+<text x="1193" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">canal VARCHAR(24)</text>
+<text x="1193" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">estado VARCHAR(24)</text>
+<text x="1193" y="320" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">iniciada_en DATETIME</text>
+<text x="1193" y="345" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">terminada_en DATETIME NULL</text>
+<text x="1193" y="370" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">referencia_externa VARCHAR(120) NULL</text>
+<rect x="55" y="504" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 504 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="532" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">PEDIDO</text>
+<text x="71" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pedido BIGINT — PK</text>
+<text x="71" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="71" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_sucursal BIGINT — FK -&gt; SUCURSAL.id_sucursal</text>
+<text x="71" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_cliente BIGINT NULL — FK -&gt; CLIENTE</text>
+<text x="71" y="669" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_interaccion BIGINT NULL — FK -&gt; INTERACCION</text>
+<text x="71" y="694" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_por BIGINT NULL — FK -&gt; auth_user.id</text>
+<text x="71" y="719" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">origen VARCHAR(24); estado VARCHAR(24)</text>
+<text x="71" y="744" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">tipo_entrega VARCHAR(20); moneda CHAR(3)</text>
+<text x="71" y="769" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">subtotal, descuento, impuestos, total DECIMAL(12,2)</text>
+<text x="71" y="794" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">notas TEXT NULL</text>
+<text x="71" y="819" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en; actualizado_en DATETIME</text>
+<rect x="616" y="504" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M626 504 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="632" y="532" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">DIRECCION_PEDIDO</text>
+<text x="632" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pedido BIGINT — PK/FK -&gt; PEDIDO.id_pedido</text>
+<text x="632" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">calle VARCHAR(160)</text>
+<text x="632" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">numero_exterior VARCHAR(20)</text>
+<text x="632" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">numero_interior VARCHAR(20) NULL</text>
+<text x="632" y="669" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">colonia VARCHAR(120)</text>
+<text x="632" y="694" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">ciudad VARCHAR(120)</text>
+<text x="632" y="719" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">codigo_postal VARCHAR(12) NULL</text>
+<text x="632" y="744" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">referencias TEXT NULL</text>
+<rect x="1177" y="504" width="526" height="369" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M1187 504 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="1193" y="532" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">DETALLE_PEDIDO</text>
+<text x="1193" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_detalle BIGINT — PK</text>
+<text x="1193" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pedido BIGINT — FK -&gt; PEDIDO.id_pedido</text>
+<text x="1193" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_producto BIGINT NULL — FK -&gt; PRODUCTO</text>
+<text x="1193" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">sku_snapshot VARCHAR(60) NULL</text>
+<text x="1193" y="669" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre_snapshot VARCHAR(160)</text>
+<text x="1193" y="694" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">cantidad INTEGER</text>
+<text x="1193" y="719" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">precio_unitario DECIMAL(12,2)</text>
+<text x="1193" y="744" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">notas TEXT NULL</text>
+<rect x="55" y="903" width="526" height="269" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 903 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="931" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">OPCION_DETALLE</text>
+<text x="71" y="968" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_opcion_detalle BIGINT — PK</text>
+<text x="71" y="993" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_detalle BIGINT — FK -&gt; DETALLE_PEDIDO</text>
+<text x="71" y="1018" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_opcion_producto BIGINT NULL — FK -&gt; OPCION_PRODUCTO</text>
+<text x="71" y="1043" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">grupo_snapshot VARCHAR(120)</text>
+<text x="71" y="1068" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">opcion_snapshot VARCHAR(120)</text>
+<text x="71" y="1093" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">precio_adicional_snapshot DECIMAL(12,2)</text>
+<rect x="616" y="903" width="526" height="269" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M626 903 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="632" y="931" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">PAGO</text>
+<text x="632" y="968" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pago BIGINT — PK</text>
+<text x="632" y="993" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pedido BIGINT — FK -&gt; PEDIDO.id_pedido</text>
+<text x="632" y="1018" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">metodo VARCHAR(24); estado VARCHAR(24)</text>
+<text x="632" y="1043" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">importe DECIMAL(12,2)</text>
+<text x="632" y="1068" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">referencia_externa VARCHAR(140) NULL</text>
+<text x="632" y="1093" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<text x="632" y="1118" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">pagado_en DATETIME NULL</text>
+<rect x="1177" y="903" width="526" height="269" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M1187 903 h506 a10 10 0 0 1 10 10 v32 h-526 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="1193" y="931" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">HISTORIAL_PEDIDO</text>
+<text x="1193" y="968" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_evento BIGINT — PK</text>
+<text x="1193" y="993" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_pedido BIGINT — FK -&gt; PEDIDO.id_pedido</text>
+<text x="1193" y="1018" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">estado_anterior VARCHAR(24) NULL</text>
+<text x="1193" y="1043" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">estado_nuevo VARCHAR(24)</text>
+<text x="1193" y="1068" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">cambiado_por BIGINT NULL — FK -&gt; auth_user.id</text>
+<text x="1193" y="1093" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nota TEXT NULL</text>
+<text x="1193" y="1118" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<text x="55" y="1217" font-family="Arial, sans-serif" font-size="14" fill="#475569">Voxcentra · Modelo lógico relacional</text>
+</svg>
