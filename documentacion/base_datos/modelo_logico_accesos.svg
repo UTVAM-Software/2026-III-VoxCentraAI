@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1266" viewBox="0 0 1760 1266" role="img" aria-labelledby="title desc">
+<title id="title">Modelo lógico: plataforma, comercios y accesos</title>
+<desc id="desc">Tablas relacionales con columnas y referencias de llaves primarias y foráneas.</desc>
+<rect width="100%" height="100%" fill="#f5f7fb"/>
+<text x="55" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#17365d">Modelo lógico: plataforma, comercios y accesos</text>
+<text x="55" y="84" font-family="Arial, sans-serif" font-size="15" fill="#475569">PK = llave primaria · FK = llave foránea · Tipos lógicos mapeados a campos de Django</text>
+<rect x="55" y="105" width="807" height="294" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 105 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">auth_user (Django)</text>
+<text x="71" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id BIGINT — PK</text>
+<rect x="897" y="105" width="807" height="294" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M907 105 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="913" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">COMERCIO</text>
+<text x="913" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_comercio BIGINT — PK</text>
+<text x="913" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre_comercial VARCHAR(160)</text>
+<text x="913" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">slug VARCHAR(100) — UNIQUE</text>
+<text x="913" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">giro VARCHAR(80)</text>
+<text x="913" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">moneda CHAR(3)</text>
+<text x="913" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">zona_horaria VARCHAR(60)</text>
+<text x="913" y="320" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">estado VARCHAR(20)</text>
+<text x="913" y="345" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<rect x="55" y="429" width="807" height="269" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 429 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="457" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">ROL_PLATAFORMA</text>
+<text x="71" y="494" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">usuario_id BIGINT — PK/FK -&gt; auth_user.id</text>
+<text x="71" y="519" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">rol VARCHAR(30)</text>
+<text x="71" y="544" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activo BOOLEAN</text>
+<text x="71" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<rect x="897" y="429" width="807" height="269" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M907 429 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="913" y="457" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">MEMBRESIA_COMERCIO</text>
+<text x="913" y="494" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_membresia BIGINT — PK</text>
+<text x="913" y="519" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">usuario_id BIGINT — FK -&gt; auth_user.id</text>
+<text x="913" y="544" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="913" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">rol VARCHAR(30)</text>
+<text x="913" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activo BOOLEAN</text>
+<text x="913" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<text x="913" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">UNIQUE(usuario_id, comercio_id)</text>
+<rect x="55" y="728" width="807" height="219" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 728 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="756" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">SUCURSAL</text>
+<text x="71" y="793" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_sucursal BIGINT — PK</text>
+<text x="71" y="818" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="71" y="843" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(120)</text>
+<text x="71" y="868" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">direccion TEXT</text>
+<text x="71" y="893" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activa BOOLEAN</text>
+<rect x="897" y="728" width="807" height="219" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M907 728 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="913" y="756" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">ALCANCE_SUCURSAL</text>
+<text x="913" y="793" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_membresia BIGINT — PK/FK -&gt; MEMBRESIA_COMERCIO</text>
+<text x="913" y="818" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_sucursal BIGINT — PK/FK -&gt; SUCURSAL</text>
+<text x="913" y="843" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">PK(id_membresia, id_sucursal)</text>
+<rect x="55" y="977" width="807" height="219" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 977 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="1005" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">CONFIGURACION_COMERCIO</text>
+<text x="71" y="1042" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — PK/FK -&gt; COMERCIO.id_comercio</text>
+<text x="71" y="1067" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">saludo TEXT</text>
+<text x="71" y="1092" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">instrucciones_atencion TEXT</text>
+<text x="71" y="1117" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">canal_voz_activo BOOLEAN</text>
+<text x="71" y="1142" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">actualizado_en DATETIME</text>
+<text x="55" y="1241" font-family="Arial, sans-serif" font-size="14" fill="#475569">Voxcentra · Modelo lógico relacional</text>
+</svg>
