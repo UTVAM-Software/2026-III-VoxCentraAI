@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1067" viewBox="0 0 1760 1067" role="img" aria-labelledby="title desc">
+<title id="title">Modelo lógico: catálogo configurable</title>
+<desc id="desc">Tablas relacionales con columnas y referencias de llaves primarias y foráneas.</desc>
+<rect width="100%" height="100%" fill="#f5f7fb"/>
+<text x="55" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#17365d">Modelo lógico: catálogo configurable</text>
+<text x="55" y="84" font-family="Arial, sans-serif" font-size="15" fill="#475569">PK = llave primaria · FK = llave foránea · Tipos lógicos mapeados a campos de Django</text>
+<rect x="55" y="105" width="807" height="344" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 105 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">CATEGORIA</text>
+<text x="71" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_categoria BIGINT — PK</text>
+<text x="71" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="71" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">categoria_padre_id BIGINT NULL — FK -&gt; CATEGORIA</text>
+<text x="71" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(120)</text>
+<text x="71" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">orden INTEGER</text>
+<text x="71" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activa BOOLEAN</text>
+<rect x="897" y="105" width="807" height="344" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M907 105 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="913" y="133" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">PRODUCTO</text>
+<text x="913" y="170" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_producto BIGINT — PK</text>
+<text x="913" y="195" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">comercio_id BIGINT — FK -&gt; COMERCIO.id_comercio</text>
+<text x="913" y="220" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_categoria BIGINT — FK -&gt; CATEGORIA.id_categoria</text>
+<text x="913" y="245" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">sku VARCHAR(60) NULL</text>
+<text x="913" y="270" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(160)</text>
+<text x="913" y="295" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">descripcion TEXT NULL</text>
+<text x="913" y="320" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">precio_base DECIMAL(12,2)</text>
+<text x="913" y="345" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activo BOOLEAN</text>
+<text x="913" y="370" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">creado_en DATETIME</text>
+<text x="913" y="395" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">UNIQUE(comercio_id, sku) si existe</text>
+<rect x="55" y="479" width="807" height="244" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 479 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="507" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">SUCURSAL_PRODUCTO</text>
+<text x="71" y="544" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_sucursal BIGINT — PK/FK -&gt; SUCURSAL</text>
+<text x="71" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_producto BIGINT — PK/FK -&gt; PRODUCTO</text>
+<text x="71" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">precio_override DECIMAL(12,2) NULL</text>
+<text x="71" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">disponible BOOLEAN</text>
+<text x="71" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">PK(id_sucursal, id_producto)</text>
+<rect x="897" y="479" width="807" height="244" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M907 479 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="913" y="507" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">GRUPO_OPCION</text>
+<text x="913" y="544" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_grupo BIGINT — PK</text>
+<text x="913" y="569" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_producto BIGINT — FK -&gt; PRODUCTO.id_producto</text>
+<text x="913" y="594" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(120)</text>
+<text x="913" y="619" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">min_selecciones INTEGER</text>
+<text x="913" y="644" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">max_selecciones INTEGER NULL</text>
+<text x="913" y="669" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">orden INTEGER</text>
+<rect x="55" y="753" width="807" height="244" rx="10" fill="#ffffff" stroke="#9fb3c8" stroke-width="1.5"/>
+<path d="M65 753 h787 a10 10 0 0 1 10 10 v32 h-807 v-32 a10 10 0 0 1 10 -10z" fill="#17365d"/>
+<text x="71" y="781" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#ffffff">OPCION_PRODUCTO</text>
+<text x="71" y="818" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_opcion BIGINT — PK</text>
+<text x="71" y="843" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">id_grupo BIGINT — FK -&gt; GRUPO_OPCION.id_grupo</text>
+<text x="71" y="868" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">nombre VARCHAR(120)</text>
+<text x="71" y="893" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">precio_adicional DECIMAL(12,2)</text>
+<text x="71" y="918" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">activa BOOLEAN</text>
+<text x="71" y="943" font-family="Arial, sans-serif" font-size="15" fill="#1f2937">orden INTEGER</text>
+<text x="55" y="1042" font-family="Arial, sans-serif" font-size="14" fill="#475569">Voxcentra · Modelo lógico relacional</text>
+</svg>
