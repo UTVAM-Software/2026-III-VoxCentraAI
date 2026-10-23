@@ -1,0 +1,30 @@
+{% extends "accesos/crud/base.html" %}
+
+{% block title %}{{ title }} · VoxCentra{% endblock %}
+
+{% block content %}
+  <section class="panel">
+    <div class="actions">
+      <h1>{{ title }}</h1>
+      {% if can_create %}<a class="button" href="{{ create_url }}">Crear</a>{% endif %}
+    </div>
+    {% if rows %}
+      <table>
+        <thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}<th>Acciones</th></tr></thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              {% for value in row.values %}<td>{{ value|default:"—" }}</td>{% endfor %}
+              <td><div class="actions">
+                {% if row.edit_url %}<a href="{{ row.edit_url }}">Editar</a>{% endif %}
+                {% if row.delete_url %}<a href="{{ row.delete_url }}">Eliminar</a>{% endif %}
+              </div></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No hay registros disponibles.</p>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,5 +1,57 @@
 from django.urls import path
 
+from pedidos.views import (
+    direccion_create_view,
+    direccion_delete_view,
+    direccion_update_view,
+    DireccionPedidoListView,
+    detalle_create_view,
+    detalle_delete_view,
+    detalle_update_view,
+    DetallePedidoListView,
+    historial_create_view,
+    historial_delete_view,
+    historial_update_view,
+    HistorialPedidoListView,
+    opcion_detalle_create_view,
+    opcion_detalle_delete_view,
+    opcion_detalle_update_view,
+    OpcionDetalleListView,
+    pago_create_view,
+    pago_delete_view,
+    pago_update_view,
+    PagoListView,
+    pedido_create_view,
+    pedido_delete_view,
+    pedido_update_view,
+    PedidoListView,
+)
+
 app_name = "pedidos"
 
-urlpatterns = []
+urlpatterns = [
+    path("", PedidoListView.as_view(), name="pedido-list"),
+    path("nuevo/", pedido_create_view, name="pedido-create"),
+    path("<int:pk>/editar/", pedido_update_view, name="pedido-update"),
+    path("<int:pk>/eliminar/", pedido_delete_view, name="pedido-delete"),
+    path("direcciones/", DireccionPedidoListView.as_view(), name="direccion-list"),
+    path("direcciones/nueva/", direccion_create_view, name="direccion-create"),
+    path("direcciones/<int:pk>/editar/", direccion_update_view, name="direccion-update"),
+    path("direcciones/<int:pk>/eliminar/", direccion_delete_view, name="direccion-delete"),
+    path("detalles/", DetallePedidoListView.as_view(), name="detalle-list"),
+    path("detalles/nuevo/", detalle_create_view, name="detalle-create"),
+    path("detalles/<int:pk>/editar/", detalle_update_view, name="detalle-update"),
+    path("detalles/<int:pk>/eliminar/", detalle_delete_view, name="detalle-delete"),
+    path("opciones-detalle/", OpcionDetalleListView.as_view(), name="opcion-detalle-list"),
+    path("opciones-detalle/nueva/", opcion_detalle_create_view, name="opcion-detalle-create"),
+    path("opciones-detalle/<int:pk>/editar/", opcion_detalle_update_view, name="opcion-detalle-update"),
+    path("opciones-detalle/<int:pk>/eliminar/", opcion_detalle_delete_view, name="opcion-detalle-delete"),
+    path("pagos/", PagoListView.as_view(), name="pago-list"),
+    path("pagos/nuevo/", pago_create_view, name="pago-create"),
+    path("pagos/<int:pk>/editar/", pago_update_view, name="pago-update"),
+    path("pagos/<int:pk>/eliminar/", pago_delete_view, name="pago-delete"),
+    path("historial/", HistorialPedidoListView.as_view(), name="historial-list"),
+    path("historial/nuevo/", historial_create_view, name="historial-create"),
+    path("historial/<int:pk>/editar/", historial_update_view, name="historial-update"),
+    path("historial/<int:pk>/eliminar/", historial_delete_view, name="historial-delete"),
+]
