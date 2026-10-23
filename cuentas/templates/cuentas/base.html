@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}VoxCentra{% endblock %}</title>
+    <style>
+        :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f4f6fb; }
+        body { margin: 0; }
+        header { background: #182b55; color: white; padding: 1rem max(1rem, calc((100% - 980px) / 2)); }
+        header a { color: white; text-decoration: none; margin-right: 1rem; }
+        main { max-width: 980px; margin: 2rem auto; padding: 0 1rem 3rem; }
+        .card { background: white; border: 1px solid #d9dfeb; border-radius: .7rem; padding: 1.25rem; margin: 1rem 0; }
+        .button, button { display: inline-block; border: 0; border-radius: .4rem; padding: .65rem .9rem; background: #2157c5; color: white; text-decoration: none; font: inherit; cursor: pointer; }
+        .button.secondary { background: #58657d; }
+        .button.danger { background: #a32937; }
+        input, select, textarea { box-sizing: border-box; max-width: 100%; padding: .55rem; border: 1px solid #aeb8ca; border-radius: .35rem; }
+        input:not([type=checkbox]):not([type=radio]), textarea { width: 100%; }
+        label { font-weight: 600; }
+        form p { margin: 1rem 0; }
+        .field-select-multiple { min-width: 18rem; min-height: 8rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: .7rem; border-bottom: 1px solid #e0e5ee; vertical-align: top; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { background: #e7f5e9; border: 1px solid #a7d4ad; padding: .8rem; margin-bottom: .5rem; border-radius: .4rem; }
+        .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .inline-form { display: inline; }
+        .errorlist { color: #a32937; }
+    </style>
+</head>
+<body>
+<header>
+    <a href="{% url 'cuentas:dashboard' %}"><strong>VoxCentra</strong></a>
+    {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+            <a href="{% url 'cuentas:user_list' %}">Usuarios</a>
+            <a href="{% url 'cuentas:group_list' %}">Grupos</a>
+            <a href="{% url 'cuentas:permission_list' %}">Permisos</a>
+        {% endif %}
+        <span>{{ user.get_username }}</span>
+        <form class="inline-form" method="post" action="{% url 'cuentas:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="button secondary">Cerrar sesión</button>
+        </form>
+    {% endif %}
+</header>
+<main>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
