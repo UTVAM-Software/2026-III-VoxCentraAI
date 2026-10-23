@@ -1,0 +1,28 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}{{ title }} · VoxCentra{% endblock %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  {% if can_create %}<a class="button" href="{{ create_url }}">Crear registro</a>{% endif %}
+  {% if rows %}
+    <table>
+      <thead>
+        <tr>{% for column in columns %}<th scope="col">{{ column }}</th>{% endfor %}<th scope="col">Acciones</th></tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            {% for value in row.values %}<td>{{ value|default_if_none:"—" }}</td>{% endfor %}
+            <td class="actions">
+              {% if row.edit_url %}<a class="button secondary" href="{{ row.edit_url }}">Editar</a>{% endif %}
+              {% if row.delete_url %}<a class="button danger" href="{{ row.delete_url }}">Eliminar</a>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No hay registros disponibles para esta cuenta.</p>
+  {% endif %}
+{% endblock %}
