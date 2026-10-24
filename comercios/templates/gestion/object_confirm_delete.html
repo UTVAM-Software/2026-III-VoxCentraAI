@@ -1,0 +1,13 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}{{ title }} · VoxCentra{% endblock %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>¿Confirmas que deseas eliminar este registro?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="danger" type="submit">Eliminar</button>
+    <a class="button secondary" href="{{ list_url }}">Cancelar</a>
+  </form>
+{% endblock %}
