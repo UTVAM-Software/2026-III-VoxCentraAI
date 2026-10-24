@@ -1,0 +1,19 @@
+{% extends 'cuentas/base.html' %}
+
+{% block title %}Administración | VoxCentra{% endblock %}
+
+{% block content %}
+<h1>Administración de cuentas</h1>
+{% if user.is_superuser %}
+    <p>Gestiona usuarios, grupos de trabajo y permisos de acceso.</p>
+    <section class="card">
+        <div class="actions">
+            <a class="button" href="{% url 'cuentas:user_list' %}">Administrar usuarios</a>
+            <a class="button" href="{% url 'cuentas:group_list' %}">Administrar grupos</a>
+            <a class="button" href="{% url 'cuentas:permission_list' %}">Administrar permisos</a>
+        </div>
+    </section>
+{% else %}
+    <section class="card"><p>Iniciaste sesión correctamente. No tienes permisos para administrar cuentas.</p></section>
+{% endif %}
+{% endblock %}

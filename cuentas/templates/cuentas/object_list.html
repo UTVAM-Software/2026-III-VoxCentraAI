@@ -1,0 +1,39 @@
+{% extends 'cuentas/base.html' %}
+
+{% block title %}{{ title }} | VoxCentra{% endblock %}
+
+{% block content %}
+<div class="actions">
+    <h1 style="flex: 1">{{ title }}</h1>
+    <a class="button" href="{% url create_url_name %}">Crear</a>
+</div>
+<section class="card">
+    {% if records %}
+        <table>
+            <thead><tr><th>Registro</th><th>Acciones</th></tr></thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record }}</td>
+                        <td class="actions">
+                            <a class="button secondary" href="{% url edit_url_name record.pk %}">Editar</a>
+                            {% if show_user_controls %}
+                                {% if not record.is_superuser %}
+                                    <a class="button secondary" href="{% url 'cuentas:user_password' record.pk %}">Cambiar contraseña</a>
+                                {% endif %}
+                                {% if not record.is_superuser and record.pk != user.pk %}
+                                    <a class="button danger" href="{% url delete_url_name record.pk %}">Eliminar</a>
+                                {% endif %}
+                            {% else %}
+                                <a class="button danger" href="{% url delete_url_name record.pk %}">Eliminar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay registros todavía.</p>
+    {% endif %}
+</section>
+{% endblock %}

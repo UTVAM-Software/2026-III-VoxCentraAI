@@ -1,0 +1,11 @@
+{% extends 'cuentas/base.html' %}
+
+{% block title %}Sesión cerrada | VoxCentra{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1>Sesión cerrada</h1>
+    <p>Tu sesión terminó correctamente.</p>
+    <a class="button" href="{% url 'cuentas:login' %}">Iniciar sesión nuevamente</a>
+</section>
+{% endblock %}

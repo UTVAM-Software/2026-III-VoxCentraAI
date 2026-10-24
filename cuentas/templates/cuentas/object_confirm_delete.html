@@ -1,0 +1,17 @@
+{% extends 'cuentas/base.html' %}
+
+{% block title %}Eliminar registro | VoxCentra{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1>Confirmar eliminación</h1>
+    <p>¿Deseas eliminar “{{ object }}”?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button class="button danger" type="submit">Eliminar</button>
+            <a class="button secondary" href="{% url cancel_url_name %}">Cancelar</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
