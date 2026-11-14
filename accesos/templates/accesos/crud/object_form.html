@@ -1,15 +1,17 @@
 {% extends "accesos/crud/base.html" %}
 
-{% block title %}{{ title }} · VoxCentra{% endblock %}
+{% block title %}{{ title }} · VoxCentraAI{% endblock %}
 
 {% block content %}
-  <section class="panel">
+  <section class="content-card crud-form-card">
+    <p class="eyebrow">Administración</p>
     <h1>{{ title }}</h1>
+    <p>Completa los campos para guardar los cambios de forma segura.</p>
     <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
-      <div class="actions">
-        <button class="button" type="submit">Guardar</button>
+      <div class="form-actions">
+        <button type="submit">Guardar</button>
         <a class="button secondary" href="{{ list_url }}">Cancelar</a>
       </div>
     </form>

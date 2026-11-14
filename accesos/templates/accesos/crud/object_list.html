@@ -1,30 +1,66 @@
 {% extends "accesos/crud/base.html" %}
 
-{% block title %}{{ title }} · VoxCentra{% endblock %}
+{% block title %}{{ title }} · VoxCentraAI{% endblock %}
 
 {% block content %}
-  <section class="panel">
-    <div class="actions">
+  <header class="crud-toolbar">
+    <div class="crud-toolbar-copy">
+      <p class="eyebrow">{% if request.resolver_match.namespace == "interacciones" %}Operación{% else %}Administración{% endif %}</p>
       <h1>{{ title }}</h1>
-      {% if can_create %}<a class="button" href="{{ create_url }}">Crear</a>{% endif %}
+      <p class="crud-description">
+        {% if request.resolver_match.namespace == "interacciones" %}
+          Consulta el historial de llamadas, el canal y el estado de cada interacción.
+        {% elif request.resolver_match.namespace == "accesos" %}
+          Administra las asignaciones, los roles y el alcance autorizado por comercio.
+        {% else %}
+          Consulta y administra los registros disponibles en este módulo.
+        {% endif %}
+      </p>
+    </div>
+    {% if can_create %}
+      <a class="primary-link" href="{{ create_url }}">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        {% if request.resolver_match.url_name == "membresia-list" %}Nueva asignación{% elif request.resolver_match.namespace == "interacciones" %}Nueva interacción{% else %}Crear registro{% endif %}
+      </a>
+    {% endif %}
+  </header>
+
+  <section class="content-card" aria-labelledby="directory-title">
+    <div class="directory-head">
+      <div>
+        <h2 id="directory-title">{% if request.resolver_match.namespace == "interacciones" %}Registro de interacciones{% elif request.resolver_match.url_name == "membresia-list" %}Accesos a comercios{% else %}{{ title }}{% endif %}</h2>
+        <p>{% if rows|length == 1 %}1 registro{% else %}{{ rows|length }} registros{% endif %}</p>
+      </div>
     </div>
     {% if rows %}
-      <table>
-        <thead><tr>{% for column in columns %}<th>{{ column }}</th>{% endfor %}<th>Acciones</th></tr></thead>
-        <tbody>
-          {% for row in rows %}
-            <tr>
-              {% for value in row.values %}<td>{{ value|default:"—" }}</td>{% endfor %}
-              <td><div class="actions">
-                {% if row.edit_url %}<a href="{{ row.edit_url }}">Editar</a>{% endif %}
-                {% if row.delete_url %}<a href="{{ row.delete_url }}">Eliminar</a>{% endif %}
-              </div></td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-wrap">
+        <table class="crud-table">
+          <thead>
+            <tr>{% for column in columns %}<th scope="col">{{ column }}</th>{% endfor %}<th scope="col">Acciones</th></tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+              <tr>
+                {% for value in row.values %}<td>{{ value|default:"—" }}</td>{% endfor %}
+                <td class="crud-actions">
+                  <div class="actions">
+                    {% if row.edit_url %}<a class="button secondary" href="{{ row.edit_url }}">Editar</a>{% endif %}
+                    {% if row.delete_url %}<a class="button danger" href="{{ row.delete_url }}">Eliminar</a>{% endif %}
+                    {% if not row.edit_url and not row.delete_url %}<span class="crud-count">Sin acciones</span>{% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% else %}
-      <p>No hay registros disponibles.</p>
+      <div class="crud-empty">
+        <div>
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" aria-hidden="true"><path d="M5 4.5h14v15H5zM8 9h8M8 12.5h8M8 16h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>No hay registros disponibles para mostrar.</p>
+        </div>
+      </div>
     {% endif %}
   </section>
 {% endblock %}

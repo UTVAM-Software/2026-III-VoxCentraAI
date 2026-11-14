@@ -19,6 +19,7 @@ from pedidos.models import (
 
 class PedidoListView(ManagedListView):
     model = Pedido
+    template_name = "gestion/pedido_list.html"
     commerce_lookup = "comercio"
     branch_lookup = "sucursal"
     permission_required = "pedidos.view_pedido"
@@ -37,6 +38,15 @@ class PedidoListView(ManagedListView):
     update_url_name = "pedidos:pedido-update"
     delete_url_name = "pedidos:pedido-delete"
 
+    def get_queryset(self):
+        return super().get_queryset().select_related("comercio", "sucursal", "cliente").prefetch_related(
+            "detalles", "pagos"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["orders"] = context["object_list"]
+        return context
 
 class DireccionPedidoListView(ManagedListView):
     model = DireccionPedido

@@ -1,0 +1,137 @@
+{% extends "cuentas/base.html" %}
+
+{% block title %}Pedidos · VoxCentraAI{% endblock %}
+
+{% block page_styles %}
+<style nonce="{{ csp_nonce }}">
+  .orders-heading { margin-bottom: 20px; }
+  .orders-live { margin-top: 8px; display: inline-flex; align-items: center; gap: 7px; color: #aeb4be; font-size: 10px; }
+  .orders-live::before { width: 7px; height: 7px; content: ""; border-radius: 50%; background: #35c996; box-shadow: 0 0 0 3px rgba(53,201,150,.12); }
+  .orders-card { min-width: 0; padding: 0; overflow: hidden; background: #11141a; border: 1px solid rgba(255,255,255,.09); border-radius: 9px; }
+  .orders-card-head { padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.09); }
+  .orders-card-head p { margin: 4px 0 0; font-size: 9px; }
+  .orders-table-wrap { overflow-x: auto; }
+  .orders-table { width: 100%; min-width: 1050px; border-collapse: collapse; color: #deddda; font-size: 10px; }
+  .orders-table th, .orders-table td { padding: 12px 11px; border-bottom: 1px solid rgba(255,255,255,.07); text-align: left; vertical-align: top; }
+  .orders-table th { color: #9297a1; background: #171a20; font-size: 9px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .orders-table td strong, .orders-table td small { display: block; }
+  .orders-table td small { margin-top: 4px; color: #9399a4; font-size: 9px; line-height: 1.5; }
+  .order-lines { margin: 0; padding-left: 15px; }
+  .order-lines li { margin: 0 0 4px; }
+  .order-state { display: inline-block; padding: 5px 7px; color: #ffd290; background: rgba(255,164,49,.1); border: 1px solid rgba(255,164,49,.2); border-radius: 12px; font-size: 8px; text-transform: uppercase; }
+  .orders-empty { min-height: 150px; display: grid; place-items: center; color: #858b96; font-size: 11px; text-align: center; }
+  @media (max-width: 760px) { .orders-card-head { padding: 13px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="orders-heading" aria-labelledby="orders-title">
+  <p class="eyebrow">Operación</p>
+  <h1 id="orders-title">Pedidos</h1>
+  <p class="page-description">Consulta los pedidos y su información de entrega, productos y pago.</p>
+  <span class="orders-live" id="liveStatus" role="status" aria-live="polite">Actualización en tiempo real</span>
+</section>
+
+<section class="orders-card" aria-labelledby="orders-table-title">
+  <header class="orders-card-head">
+    <div><h2 id="orders-table-title">Registro de pedidos</h2><p id="orderCount">{{ orders|length }} pedido{{ orders|length|pluralize:"s" }}</p></div>
+    {% if can_create %}<a class="primary-link" href="{{ create_url }}">Crear pedido</a>{% endif %}
+  </header>
+  <div class="orders-table-wrap">
+    <table class="orders-table">
+      <thead><tr>
+        <th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Comercio y sucursal</th>
+        <th scope="col">Productos</th><th scope="col">Entrega</th><th scope="col">Pago</th>
+        <th scope="col">Estado</th><th scope="col">Total</th><th scope="col">Fecha</th>
+      </tr></thead>
+      <tbody id="ordersBody">
+        {% for order in orders %}
+          <tr data-order-id="{{ order.id_pedido }}">
+            <td><strong>VC-{{ order.id_pedido|stringformat:"04d" }}</strong><small>{{ order.origen }}</small></td>
+            <td><strong>{{ order.cliente.nombre|default:"Sin nombre" }}</strong>{% if order.cliente.telefono %}<small>{{ order.cliente.telefono }}</small>{% endif %}</td>
+            <td><strong>{{ order.comercio.nombre_comercial }}</strong><small>{{ order.sucursal.nombre }}</small></td>
+            <td><ul class="order-lines">{% for line in order.detalles.all %}<li>{{ line.cantidad }} × {{ line.nombre_snapshot }}<small>{{ order.moneda }} {{ line.precio_unitario }} c/u{% if line.notas %} · {{ line.notas }}{% endif %}</small></li>{% empty %}<li>Sin detalle</li>{% endfor %}</ul></td>
+            <td>{{ order.tipo_entrega }}{% if order.direccion_entrega %}<small>{{ order.direccion_entrega.calle }} {{ order.direccion_entrega.numero_exterior }}, {{ order.direccion_entrega.colonia }}, {{ order.direccion_entrega.ciudad }}</small>{% endif %}</td>
+            <td>{% with payment=order.pagos.first %}{% if payment %}{{ payment.metodo }}<small>{{ payment.estado }}</small>{% else %}Pendiente{% endif %}{% endwith %}</td>
+            <td><span class="order-state">{{ order.estado }}</span></td>
+            <td><strong>{{ order.moneda }} {{ order.total }}</strong></td>
+            <td>{{ order.creado_en|date:"d/m/Y H:i" }}</td>
+          </tr>
+        {% empty %}
+          <tr id="ordersEmpty"><td colspan="9"><div class="orders-empty">Todavía no hay pedidos para los comercios disponibles.</div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script nonce="{{ csp_nonce }}">
+(() => {
+  "use strict";
+  const body = document.getElementById("ordersBody");
+  const liveStatus = document.getElementById("liveStatus");
+  const count = document.getElementById("orderCount");
+  let socket;
+  let reconnectDelay = 1500;
+
+  function appendOrder(order) {
+    if (document.querySelector('[data-order-id="' + CSS.escape(String(order.id)) + '"]')) return;
+    const empty = document.getElementById("ordersEmpty");
+    if (empty) empty.remove();
+    const row = document.createElement("tr");
+    row.dataset.orderId = String(order.id);
+    const items = Array.isArray(order.items) ? order.items : [];
+    const values = [
+      ["VC-" + String(order.id).padStart(4, "0"), order.reference || ""],
+      [order.customer || "Sin nombre", order.customer_phone || ""],
+      [order.commerce || "", order.branch || ""],
+      [items.map((item) => (Number(item.quantity) || 1) + " × " + String(item.name || "") + " · " + (order.currency || "MXN") + " " + (item.unit_price || "0.00") + " c/u" + (item.notes ? " — " + item.notes : "")).join("\n") || order.items_label || "Sin detalle", ""],
+      [order.delivery || "", order.address || ""],
+      [order.payment_method || "pendiente", "Estado de pago: pendiente"],
+      [order.state || "", ""],
+      [(order.currency || "MXN") + " " + (order.total || "0.00"), order.notes || ""],
+      [order.created || "", ""]
+    ];
+    for (let index = 0; index < values.length; index++) {
+      const cell = document.createElement("td");
+      if (index === 0 || index === 1 || index === 2 || index === 6 || index === 7) {
+        const strong = document.createElement(index === 6 ? "span" : "strong");
+        strong.textContent = values[index][0];
+        if (index === 6) strong.className = "order-state";
+        cell.appendChild(strong);
+      } else {
+        cell.appendChild(document.createTextNode(values[index][0]));
+      }
+      if (values[index][1]) {
+        const small = document.createElement("small");
+        small.textContent = values[index][1];
+        cell.appendChild(small);
+      }
+      row.appendChild(cell);
+    }
+    body.prepend(row);
+    const visible = body.querySelectorAll("tr[data-order-id]").length;
+    count.textContent = visible + " pedido" + (visible === 1 ? "" : "s");
+  }
+
+  function connect() {
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    socket = new WebSocket(protocol + "//" + location.host + "/ws/orders/");
+    socket.onopen = () => { reconnectDelay = 1500; liveStatus.textContent = "Actualización en tiempo real activa"; };
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type === "order_created" && message.order) appendOrder(message.order);
+      } catch (_) { }
+    };
+    socket.onclose = () => {
+      liveStatus.textContent = "Reconectando actualizaciones…";
+      window.setTimeout(connect, reconnectDelay);
+      reconnectDelay = Math.min(reconnectDelay * 2, 10000);
+    };
+    socket.onerror = () => socket.close();
+  }
+  connect();
+})();
+</script>
+{% endblock %}
