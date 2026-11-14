@@ -1,15 +1,17 @@
 {% extends "accesos/crud/base.html" %}
 
-{% block title %}{{ title }} · VoxCentra{% endblock %}
+{% block title %}{{ title }} · VoxCentraAI{% endblock %}
 
 {% block content %}
-  <section class="panel">
+  <section class="content-card crud-form-card">
+    <p class="eyebrow">Administración</p>
     <h1>{{ title }}</h1>
-    <p>¿Confirmas que deseas eliminar “{{ object }}”?</p>
+    <p class="crud-danger-copy">Confirma si deseas eliminar este registro:</p>
+    <p class="confirm-copy">{{ object }}</p>
     <form method="post">
       {% csrf_token %}
-      <div class="actions">
-        <button class="button" type="submit">Confirmar eliminación</button>
+      <div class="form-actions">
+        <button class="danger" type="submit">Confirmar eliminación</button>
         <a class="button secondary" href="{{ list_url }}">Cancelar</a>
       </div>
     </form>

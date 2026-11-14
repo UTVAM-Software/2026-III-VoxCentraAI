@@ -1,40 +1,31 @@
-<!doctype html>
-<html lang="es-MX">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}VoxCentra{% endblock %}</title>
-  <style>
-    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f5f7fb; }
-    body { margin: 0; }
-    header { background: #14213d; color: white; padding: 1rem max(1rem, calc((100% - 1100px) / 2)); }
-    header strong { margin-right: 1.5rem; }
-    header nav { display: inline-flex; gap: 1rem; flex-wrap: wrap; }
-    header a { color: white; text-decoration: none; }
-    main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
-    h1 { margin-top: 0; }
-    .panel { background: white; border: 1px solid #dce2ed; border-radius: .6rem; padding: 1.25rem; }
-    .actions { display: flex; gap: .65rem; align-items: center; }
-    .button { display: inline-block; border: 0; border-radius: .35rem; background: #2457c5; color: white; padding: .55rem .85rem; text-decoration: none; font: inherit; cursor: pointer; }
-    .button.secondary { background: #596579; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    th, td { text-align: left; border-bottom: 1px solid #e5e9f0; padding: .7rem .5rem; vertical-align: top; }
-    th { color: #536176; font-size: .9rem; }
-    form p { display: grid; gap: .35rem; }
-    input, select, textarea { box-sizing: border-box; max-width: 100%; padding: .5rem; border: 1px solid #bbc5d4; border-radius: .3rem; font: inherit; }
-    .errorlist { color: #a31d2d; }
-    @media (max-width: 700px) { .panel { overflow-x: auto; } }
-  </style>
-</head>
-<body>
-  <header>
-    <strong>VoxCentra · Gestión</strong>
-    <nav>
-      {% if request.user.is_superuser %}<a href="{% url 'accesos:rol-list' %}">Roles y accesos</a>{% endif %}
-      {% if perms.interacciones.view_interaccion %}<a href="{% url 'interacciones:interaccion-list' %}">Interacciones</a>{% endif %}
-      {% if perms.pedidos.view_pedido %}<a href="{% url 'pedidos:pedido-list' %}">Pedidos</a>{% endif %}
-    </nav>
-  </header>
-  <main>{% block content %}{% endblock %}</main>
-</body>
-</html>
+{% extends "cuentas/base.html" %}
+
+{% block title %}{{ title|default:"Gestión" }} · VoxCentraAI{% endblock %}
+
+{% block page_styles %}
+<style nonce="{{ csp_nonce }}">
+  .crud-toolbar { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:22px; }
+  .crud-toolbar-copy { min-width:0; }
+  .crud-toolbar .eyebrow { margin:0 0 8px; }
+  .crud-toolbar h1 { margin:0; }
+  .crud-description { margin:7px 0 0; color:var(--muted); font-size:11px; line-height:1.6; }
+  .crud-count { margin:4px 0 0; color:#838894; font-size:10px; }
+  .crud-table { min-width:720px; }
+  .crud-table td { overflow-wrap:anywhere; }
+  .crud-actions { min-width:120px; }
+  .crud-actions .button { min-height:30px; padding:0 9px; font-size:9px; }
+  .crud-empty { min-height:155px; display:grid; place-items:center; color:#9297a1; text-align:center; font-size:11px; }
+  .crud-empty p { max-width:360px; margin:8px 0 0; font-size:10px; }
+  .crud-form-card { max-width:860px; }
+  .crud-form-card form { margin-top:18px; }
+  .crud-form-card > .eyebrow { margin:0 0 8px; }
+  .crud-form-card > p { max-width:650px; margin:8px 0 0; font-size:11px; }
+  .crud-form-card .actions { margin-top:18px; }
+  .crud-danger-copy { margin:10px 0 22px; color:#b4b6bd; font-size:12px; }
+  @media (max-width:650px) {
+    .crud-toolbar { align-items:flex-start; flex-direction:column; gap:13px; }
+    .crud-table { min-width:680px; }
+    .crud-form-card { padding:15px; }
+  }
+</style>
+{% endblock %}
