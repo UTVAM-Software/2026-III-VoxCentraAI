@@ -33,8 +33,6 @@ class SucursalForm(UserScopedModelForm):
         if self.instance.pk:
             self.fields["comercio"].disabled = True
         elif self.user and not self.user.is_superuser:
-            # A user with branch-level restrictions can manage assigned branches,
-            # but cannot create a new branch under a restricted membership.
             commerces = commerces_with_unrestricted_branch_access(self.user)
         self.fields["comercio"].queryset = commerces
 
