@@ -1,19 +1,109 @@
 {% extends 'cuentas/base.html' %}
 
-{% block title %}Administración | VoxCentra{% endblock %}
+{% block title %}{% if user.is_superuser %}Panel de administración{% else %}Panel de operación{% endif %} | VoxCentraAI{% endblock %}
 
 {% block content %}
-<h1>Administración de cuentas</h1>
-{% if user.is_superuser %}
-    <p>Gestiona usuarios, grupos de trabajo y permisos de acceso.</p>
-    <section class="card">
-        <div class="actions">
-            <a class="button" href="{% url 'cuentas:user_list' %}">Administrar usuarios</a>
-            <a class="button" href="{% url 'cuentas:group_list' %}">Administrar grupos</a>
-            <a class="button" href="{% url 'cuentas:permission_list' %}">Administrar permisos</a>
-        </div>
+<style nonce="{{ csp_nonce }}">
+    .dashboard-heading { margin-bottom: 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    .dashboard-heading p.description { max-width: 650px; margin: 8px 0 0; font-size: 12px; }
+    .role-tag { min-height: 29px; padding: 0 10px; display: inline-flex; align-items: center; flex: 0 0 auto; color: #ffc17a; background: rgba(255,133,0,.09); border: 1px solid rgba(255,133,0,.25); border-radius: 16px; font-size: 9px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+    .stat-grid { margin-bottom: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 11px; }
+    .stat-card { min-height: 112px; padding: 16px; background: #11141a; border: 1px solid rgba(255,255,255,.09); border-radius: 8px; }
+    .stat-card .label { margin: 0; color: #a4a7af; font-size: 10px; }
+    .stat-card .value { margin: 8px 0 0; color: #f4f2ef; font-size: 26px; font-weight: 650; letter-spacing: -.04em; line-height: 1; }
+    .stat-card .note { margin: 6px 0 0; color: #747a85; font-size: 9px; }
+    .section-heading { margin: 0 0 13px; color: #f0eeec; font-size: 15px; font-weight: 620; }
+    .module-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .module-card { min-height: 105px; padding: 15px; display: flex; align-items: flex-start; gap: 12px; background: #15181e; border: 1px solid rgba(255,255,255,.08); border-radius: 7px; text-decoration: none; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
+    .module-card:hover { background: #191c22; border-color: rgba(255,133,0,.31); transform: translateY(-2px); }
+    .module-icon { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; color: #ff9a24; background: rgba(255,133,0,.09); border: 1px solid rgba(255,133,0,.18); border-radius: 6px; }
+    .module-icon svg { width: 17px; height: 17px; }
+    .module-card strong { display: block; margin: 1px 0 5px; color: #f1efed; font-size: 11px; font-weight: 620; }
+    .module-card span.copy { display: block; color: #8e929b; font-size: 10px; line-height: 1.5; }
+    .panel-note { margin: 16px 0 0; color: #777c86; font-size: 10px; }
+    .overview-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 13px; margin-top: 14px; }
+    .overview-card { min-width: 0; padding: 17px; background: #11141a; border: 1px solid rgba(255,255,255,.09); border-radius: 8px; }
+    .overview-head { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .overview-head a { color: #ffad47; font-size: 9px; text-decoration: none; }
+    .overview-head a:hover { color: #ffc17a; }
+    .overview-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    .overview-table th, .overview-table td { padding: 9px 7px; border-bottom: 1px solid rgba(255,255,255,.07); text-align: left; }
+    .overview-table th { color: #8f949e; font-size: 8px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+    .overview-table td { color: #d6d4d3; }
+    .overview-table tr:last-child td { border-bottom: 0; }
+    .overview-empty { min-height: 94px; display: grid; place-items: center; color: #858a94; font-size: 10px; text-align: center; }
+    .status-text { color: #ffbd73 !important; }
+    .empty-modules { color: #a0a3ab; font-size: 12px; }
+    @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 900px) { .overview-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .dashboard-heading { align-items: flex-start; flex-direction: column; } .stat-grid { gap: 8px; } .stat-card { min-height: 96px; padding: 13px; } .module-grid { grid-template-columns: 1fr; } .overview-card { padding: 13px; } }
+</style>
+
+<section class="dashboard-heading" aria-labelledby="dashboard-title">
+    <div>
+        <p class="eyebrow">{% if user.is_superuser %}Centro de administración{% else %}Área de trabajo{% endif %}</p>
+        <h1 id="dashboard-title">{% if user.is_superuser %}Panel administrador{% else %}Panel de usuario{% endif %}</h1>
+        <p class="description">{% if user.is_superuser %}Resumen general y acceso a la administración de VoxCentraAI.{% elif read_only_profile %}Consulta la información de tus comercios asignados.{% else %}Administra los registros operativos permitidos para tu cuenta.{% endif %}</p>
+    </div>
+    <span class="role-tag">{{ role_label }}</span>
+</section>
+
+<section class="stat-grid" aria-label="Resumen de actividad">
+    {% if user.is_superuser %}
+        <article class="stat-card"><p class="label">Cuentas activas</p><p class="value">{{ account_count }}</p><p class="note">Usuarios del sistema</p></article>
+    {% endif %}
+    <article class="stat-card"><p class="label">Comercios</p><p class="value">{{ commerce_count }}</p><p class="note">{% if user.is_superuser %}Registrados en la plataforma{% else %}Asignados a tu cuenta{% endif %}</p></article>
+    <article class="stat-card"><p class="label">Clientes</p><p class="value">{{ client_count }}</p><p class="note">{% if user.is_superuser %}Contactos registrados{% else %}Dentro de tus comercios{% endif %}</p></article>
+    <article class="stat-card"><p class="label">Productos</p><p class="value">{{ product_count }}</p><p class="note">Catálogo registrado</p></article>
+    <article class="stat-card"><p class="label">Pedidos</p><p class="value">{{ order_count }}</p><p class="note">Pedidos registrados</p></article>
+    <article class="stat-card"><p class="label">Interacciones</p><p class="value">{{ interaction_count }}</p><p class="note">Registros del comercio</p></article>
+</section>
+
+<section class="card" aria-labelledby="modules-title">
+    <h2 class="section-heading" id="modules-title">{% if user.is_superuser %}Administración y módulos{% else %}Módulos disponibles{% endif %}</h2>
+    <div class="module-grid">
+        {% if user.is_superuser %}
+            <a class="module-card" href="{% url 'comercios:comercio-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10h16l-1.5-6h-13L4 10ZM6 10v10h12V10M9 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span><strong>Comercios</strong><span class="copy">Gestiona los negocios y sus sucursales.</span></span></a>
+            <a class="module-card" href="{% url 'clientes:cliente-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a5.2 5.2 0 0 1 3.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span><strong>Clientes</strong><span class="copy">Consulta contactos y direcciones.</span></span></a>
+            <a class="module-card" href="{% url 'catalogo:producto-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Catálogo</strong><span class="copy">Revisa productos y opciones.</span></span></a>
+            <a class="module-card" href="{% url 'pedidos:pedido-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Pedidos</strong><span class="copy">Consulta los pedidos registrados.</span></span></a>
+            <a class="module-card" href="{% url 'interacciones:interaccion-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span><strong>Interacciones</strong><span class="copy">Consulta registros de atención.</span></span></a>
+            <a class="module-card" href="{% url 'cuentas:user_list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 8h5M18.5 5.5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span><strong>Usuarios</strong><span class="copy">Crea y administra cuentas de acceso.</span></span></a>
+            <a class="module-card" href="{% url 'cuentas:group_list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Grupos y permisos</strong><span class="copy">Define lo que puede consultar cada perfil.</span></span></a>
+            <a class="module-card" href="{% url 'comercios:configuracion-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.9.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.7-1l-.2.1-2.9-1.7.1-.2a1.7 1.7 0 0 0-.2-1.9l-.1-.2v-3.4l.2-.1a1.7 1.7 0 0 0 1-1.7l-.1-.2 1.7-2.9.2.1a1.7 1.7 0 0 0 1.9-.2l.2-.1h3.4l.1.2a1.7 1.7 0 0 0 1.7 1l.2-.1 2.9 1.7-.1.2a1.7 1.7 0 0 0 .2 1.9l.1.2v3.4Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span><span><strong>Configuración</strong><span class="copy">Consulta los ajustes del comercio.</span></span></a>
+        {% else %}
+            {% if can_view_commerces %}<a class="module-card" href="{% url 'comercios:comercio-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10h16l-1.5-6h-13L4 10ZM6 10v10h12V10M9 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span><strong>Comercios</strong><span class="copy">Consulta los negocios asignados.</span></span></a>{% endif %}
+            {% if can_view_clients %}<a class="module-card" href="{% url 'clientes:cliente-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a5.2 5.2 0 0 1 3.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span><strong>Clientes</strong><span class="copy">Consulta contactos y direcciones.</span></span></a>{% endif %}
+            {% if can_view_catalog %}<a class="module-card" href="{% url 'catalogo:producto-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Catálogo</strong><span class="copy">Consulta productos y opciones.</span></span></a>{% endif %}
+            {% if can_view_orders %}<a class="module-card" href="{% url 'pedidos:pedido-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Pedidos</strong><span class="copy">Consulta pedidos del comercio.</span></span></a>{% endif %}
+            {% if can_view_interactions %}<a class="module-card" href="{% url 'interacciones:interaccion-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span><strong>Interacciones</strong><span class="copy">Consulta registros de atención.</span></span></a>{% endif %}
+            {% if can_view_config %}<a class="module-card" href="{% url 'comercios:configuracion-list' %}"><span class="module-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="m19 14 .5 1.5-2 2-1.5-.5a6 6 0 0 1-2 .8l-.7 1.4h-2.8l-.7-1.4a6 6 0 0 1-2-.8l-1.5.5-2-2L5 14a6 6 0 0 1-.8-2l-1.4-.7V8.5l1.4-.7a6 6 0 0 1 .8-2l-.5-1.5 2-2L8 2.8a6 6 0 0 1 2-.8l.7-1.4h2.8l.7 1.4a6 6 0 0 1 2 .8l1.5-.5 2 2-.5 1.5a6 6 0 0 1 .8 2l1.4.7V11l-1.4.7a6 6 0 0 1-.8 2Z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg></span><span><strong>Configuración</strong><span class="copy">Consulta los ajustes del comercio.</span></span></a>{% endif %}
+            {% if not can_view_commerces and not can_view_clients and not can_view_catalog and not can_view_orders and not can_view_interactions and not can_view_config %}<p class="empty-modules">Tu cuenta todavía no tiene módulos de consulta asignados.</p>{% endif %}
+        {% endif %}
+    </div>
+    {% if read_only_profile %}<p class="panel-note">La información se limita a tus comercios asignados. Este perfil es de solo lectura.</p>{% elif not user.is_superuser %}<p class="panel-note">La información se limita a tus comercios asignados; las acciones disponibles dependen de tus permisos.</p>{% endif %}
+</section>
+
+<div class="overview-grid">
+    {% if can_view_orders %}
+    <section class="overview-card" aria-labelledby="recent-orders-title">
+        <div class="overview-head"><h2 id="recent-orders-title">Pedidos recientes</h2><a href="{% url 'pedidos:pedido-list' %}">Ver listado</a></div>
+        {% if recent_orders %}
+        <div class="table-wrap"><table class="overview-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Total</th></tr></thead><tbody>
+            {% for order in recent_orders %}<tr><td>#{{ order.id_pedido }}</td><td>{{ order.cliente|default:'Sin cliente asociado' }}</td><td>{{ order.creado_en|date:'d/m/Y H:i' }}</td><td class="status-text">{{ order.estado }}</td><td>${{ order.total }} {{ order.moneda }}</td></tr>{% endfor %}
+        </tbody></table></div>
+        {% else %}<div class="overview-empty">Aún no hay pedidos registrados.</div>{% endif %}
     </section>
-{% else %}
-    <section class="card"><p>Iniciaste sesión correctamente. No tienes permisos para administrar cuentas.</p></section>
-{% endif %}
+    {% endif %}
+    {% if can_view_interactions %}
+    <section class="overview-card" aria-labelledby="recent-interactions-title">
+        <div class="overview-head"><h2 id="recent-interactions-title">Interacciones recientes</h2><a href="{% url 'interacciones:interaccion-list' %}">Ver listado</a></div>
+        {% if recent_interactions %}
+        <div class="table-wrap"><table class="overview-table"><thead><tr><th>Canal</th><th>Cliente</th><th>Inicio</th><th>Estado</th></tr></thead><tbody>
+            {% for interaction in recent_interactions %}<tr><td>{{ interaction.canal }}</td><td>{{ interaction.cliente|default:'Sin cliente asociado' }}</td><td>{{ interaction.iniciada_en|date:'d/m/Y H:i' }}</td><td class="status-text">{{ interaction.estado }}</td></tr>{% endfor %}
+        </tbody></table></div>
+        {% else %}<div class="overview-empty">Aún no hay interacciones registradas.</div>{% endif %}
+    </section>
+    {% endif %}
+</div>
 {% endblock %}

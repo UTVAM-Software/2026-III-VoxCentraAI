@@ -6,5 +6,6 @@ venv/
 .env
 
 # Mantener fuera del repositorio solo la documentacion general local
-/README.md
 /CONTRIBUTING.md
+staticfiles/
+.local-logs/

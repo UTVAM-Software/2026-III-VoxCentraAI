@@ -1,0 +1,350 @@
+{% extends "cuentas/base.html" %}
+
+{% block title %}Prueba de llamadas · VoxCentraAI{% endblock %}
+
+{% block page_styles %}
+<style nonce="{{ csp_nonce }}">
+  .test-heading { margin-bottom: 20px; }
+  .test-layout { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(300px,.8fr); gap: 14px; align-items: stretch; }
+  .test-card { min-width: 0; padding: 18px; background: #11141a; border: 1px solid rgba(255,255,255,.09); border-radius: 9px; }
+  .test-card h2 { margin-bottom: 6px; }
+  .test-card > p { margin: 0 0 15px; font-size: 11px; }
+  .selectors { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+  .selectors label { display: grid; gap: 6px; color: #aeb2bb; font-size: 10px; }
+  .selectors select { width: 100%; min-height: 38px; padding: 0 10px; color: #f2f0ed; background: #0c0e12; border: 1px solid rgba(255,255,255,.14); border-radius: 5px; }
+  .call-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+  .call-controls button { min-height: 40px; padding-inline: 15px; }
+  #interruptButton[hidden] { display: none; }
+  .call-controls button.secondary { color: #dedcda; background: #1b1f26; border-color: rgba(255,255,255,.1); }
+  .call-status { min-height: 22px; margin: 12px 0 0; color: #a7acb5; font-size: 10px; }
+  .call-status[data-state="error"] { color: #ffad9e; }
+  .call-status[data-state="live"] { color: #45d6a6; }
+  .transcript { height: 300px; margin-top: 15px; padding: 12px; overflow-y: auto; background: #0c0e12; border: 1px solid rgba(255,255,255,.07); border-radius: 6px; }
+  .transcript-empty { display: grid; height: 100%; place-items: center; color: #858b96; font-size: 11px; text-align: center; }
+  .line { margin: 0 0 10px; padding: 9px 10px; color: #e5e3e0; background: #171b22; border-left: 2px solid #737984; border-radius: 4px; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+  .line[data-role="assistant"] { border-left-color: #ff8500; }
+  .line small { display: block; margin-bottom: 3px; color: #a6abb4; font-size: 9px; text-transform: uppercase; letter-spacing: .07em; }
+  .order-empty { min-height: 150px; display: grid; place-items: center; color: #858b96; font-size: 11px; text-align: center; }
+  .order-item { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.07); color: #e9e7e5; font-size: 10px; }
+  .order-item span:last-child { color: #b9bdc4; white-space: nowrap; }
+  .order-meta { margin: 12px 0; padding: 10px; color: #b4b8c0; background: #171b22; border-radius: 5px; font-size: 10px; line-height: 1.6; }
+  .order-total { margin-top: 12px; padding-top: 12px; display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.1); color: #f4f1ee; font-size: 13px; font-weight: 650; }
+  .order-total strong { color: #ff9a20; }
+  .saved-message { display: none; margin-top: 13px; padding: 10px 12px; color: #d6f5e8; background: #11241c; border: 1px solid rgba(69,214,166,.25); border-radius: 5px; font-size: 10px; }
+  .saved-message.is-visible { display: block; }
+  .test-note { margin: 13px 0 0; color: #777e88; font-size: 9px; line-height: 1.6; }
+  @media (max-width: 900px) { .test-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .selectors { grid-template-columns: 1fr; } .transcript { height: 245px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="test-heading" aria-labelledby="test-title">
+  <p class="eyebrow">Herramienta de prueba</p>
+  <h1 id="test-title">Prueba de llamadas</h1>
+  <p class="page-description">Habla con la asistente virtual usando el catálogo real de un comercio asignado.</p>
+</section>
+
+<div class="test-layout">
+  <section class="test-card" aria-labelledby="call-title">
+    <h2 id="call-title">Llamada de voz</h2>
+    <p>Permite el micrófono para iniciar. La llamada se procesa en tiempo real.</p>
+    <div class="selectors">
+      <label for="commerceSelect">Comercio
+        <select id="commerceSelect">
+          {% for commerce in commerces %}<option value="{{ commerce.id_comercio }}">{{ commerce.nombre_comercial }}</option>{% endfor %}
+        </select>
+      </label>
+      <label for="branchSelect">Sucursal
+        <select id="branchSelect">
+          {% for branch in branches %}<option value="{{ branch.id_sucursal }}" data-commerce="{{ branch.comercio_id }}">{{ branch.nombre }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="call-controls">
+      <button id="startButton" type="button">Iniciar llamada</button>
+      <button id="interruptButton" class="secondary" type="button" hidden>Interrumpir respuesta</button>
+      <button id="stopButton" class="secondary" type="button" disabled>Terminar llamada</button>
+    </div>
+    <p id="callStatus" class="call-status" role="status" aria-live="polite">Lista para iniciar.</p>
+    <div id="transcript" class="transcript" role="log" aria-live="polite" aria-relevant="additions text">
+      <div id="transcriptEmpty" class="transcript-empty">La conversación aparecerá aquí.</div>
+    </div>
+    <p class="test-note">El audio se transmite a Deepgram para reconocimiento y voz, y el texto de la conversación a Groq para generar respuestas. No se guarda una grabación.</p>
+  </section>
+
+  <section class="test-card" aria-labelledby="order-title">
+    <h2 id="order-title">Pedido en preparación</h2>
+    <p>El total se calcula con los precios guardados en el catálogo del comercio.</p>
+    <div id="orderItems"><div class="order-empty">Aún no hay productos en el pedido.</div></div>
+    <div id="orderMeta" class="order-meta" hidden></div>
+    <div class="order-total"><span>Total estimado</span><strong id="orderTotal">$0.00</strong></div>
+    <div id="savedMessage" class="saved-message" role="status" aria-live="polite"></div>
+    <p class="test-note">El registro definitivo ocurre cuando la conversación confirma el pedido. Después aparece en Pedidos y se actualiza sin recargar.</p>
+  </section>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+(() => {
+  "use strict";
+  const commerceSelect = document.getElementById("commerceSelect");
+  const branchSelect = document.getElementById("branchSelect");
+  const startButton = document.getElementById("startButton");
+  const stopButton = document.getElementById("stopButton");
+  const interruptButton = document.getElementById("interruptButton");
+  const status = document.getElementById("callStatus");
+  const transcript = document.getElementById("transcript");
+  const transcriptEmpty = document.getElementById("transcriptEmpty");
+  const orderItems = document.getElementById("orderItems");
+  const orderMeta = document.getElementById("orderMeta");
+  const orderTotal = document.getElementById("orderTotal");
+  const savedMessage = document.getElementById("savedMessage");
+  let socket = null;
+  let stream = null;
+  let audioContext = null;
+  let processor = null;
+  let micSource = null;
+  let muteNode = null;
+  let nextAudioTime = 0;
+  let isPlaying = false;
+  let assistantSpeaking = false;
+  let assistantTurnComplete = false;
+  let playbackFinishedNotified = false;
+  let audioDecodeQueue = Promise.resolve();
+  const activeSources = new Set();
+
+  function setStatus(message, state) {
+    status.textContent = message;
+    status.dataset.state = state || "idle";
+  }
+
+  function filterBranches() {
+    const commerceId = commerceSelect.value;
+    let firstVisible = null;
+    for (const option of branchSelect.options) {
+      const visible = option.dataset.commerce === commerceId;
+      option.hidden = !visible;
+      if (visible && firstVisible === null) firstVisible = option;
+    }
+    if (firstVisible) {
+      firstVisible.selected = true;
+      branchSelect.disabled = false;
+      startButton.disabled = false;
+    } else {
+      branchSelect.disabled = true;
+      startButton.disabled = true;
+      setStatus("Este comercio no tiene sucursales disponibles para tu cuenta.", "error");
+    }
+  }
+  commerceSelect.addEventListener("change", filterBranches);
+  filterBranches();
+
+  function addTranscript(role, text) {
+    if (transcriptEmpty) transcriptEmpty.remove();
+    const row = document.createElement("p");
+    row.className = "line";
+    row.dataset.role = role;
+    const label = document.createElement("small");
+    label.textContent = role === "assistant" ? "Asistente virtual" : "Cliente";
+    row.append(label, document.createTextNode(text));
+    transcript.appendChild(row);
+    transcript.scrollTop = transcript.scrollHeight;
+  }
+
+  function renderOrder(data) {
+    const items = Array.isArray(data.items) ? data.items : [];
+    orderItems.replaceChildren();
+    if (!items.length) {
+      const empty = document.createElement("div");
+      empty.className = "order-empty";
+      empty.textContent = "Aún no hay productos confirmados en la conversación.";
+      orderItems.appendChild(empty);
+    } else {
+      for (const item of items) {
+        const row = document.createElement("div");
+        row.className = "order-item";
+        const name = document.createElement("span");
+        name.textContent = (Number(item.quantity) || 1) + " × " + String(item.name || "Producto");
+        const price = document.createElement("span");
+        const amount = (Number(item.quantity) || 1) * (Number(item.price) || 0);
+        price.textContent = new Intl.NumberFormat("es-MX", { style: "currency", currency: data.currency || "MXN" }).format(amount);
+        row.append(name, price);
+        orderItems.appendChild(row);
+      }
+    }
+    const parts = [];
+    if (data.customer_name) parts.push("Cliente: " + String(data.customer_name));
+    if (data.delivery_type) parts.push("Entrega: " + (data.delivery_type === "domicilio" ? "Domicilio" : "Recoger"));
+    if (data.payment_method) parts.push("Pago: " + String(data.payment_method));
+    orderMeta.hidden = parts.length === 0;
+    orderMeta.textContent = parts.join(" · ");
+    orderTotal.textContent = new Intl.NumberFormat("es-MX", { style: "currency", currency: data.currency || "MXN" }).format(Number(data.estimated_total) || 0);
+  }
+
+  function downsample(input, sampleRate) {
+    const ratio = sampleRate / 16000;
+    const length = Math.floor(input.length / ratio);
+    const output = new Int16Array(length);
+    for (let i = 0; i < length; i++) {
+      const sample = Math.max(-1, Math.min(1, input[Math.floor(i * ratio)]));
+      output[i] = sample < 0 ? sample * 32768 : sample * 32767;
+    }
+    return output;
+  }
+
+  async function playAudio(buffer) {
+    if (!audioContext) return;
+    try {
+      const decoded = await audioContext.decodeAudioData(buffer.slice(0));
+      const source = audioContext.createBufferSource();
+      source.buffer = decoded;
+      source.connect(audioContext.destination);
+      const startAt = Math.max(audioContext.currentTime + 0.02, nextAudioTime);
+      source.start(startAt);
+      activeSources.add(source);
+      nextAudioTime = startAt + decoded.duration;
+      isPlaying = true;
+      source.onended = () => {
+        activeSources.delete(source);
+        if (activeSources.size === 0 && audioContext) {
+          isPlaying = false;
+          nextAudioTime = audioContext.currentTime;
+          finishAssistantSpeechIfReady();
+        }
+      };
+    } catch (error) {
+      setStatus("No se pudo reproducir el audio. Revisa la salida de sonido.", "error");
+    }
+  }
+
+  function finishAssistantSpeechIfReady() {
+    if (!assistantTurnComplete) return;
+    audioDecodeQueue.then(() => {
+      if (assistantTurnComplete && activeSources.size === 0) {
+        assistantSpeaking = false;
+        interruptButton.hidden = true;
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          if (!playbackFinishedNotified) {
+            playbackFinishedNotified = true;
+            socket.send(JSON.stringify({ type: "playback_finished" }));
+          }
+          setStatus("Llamada activa; puedes hablar.", "live");
+        }
+      }
+    }).catch(() => {});
+  }
+  function startMicrophone() {
+    micSource = audioContext.createMediaStreamSource(stream);
+    processor = audioContext.createScriptProcessor(4096, 1, 1);
+    muteNode = audioContext.createGain();
+    muteNode.gain.value = 0;
+    micSource.connect(processor);
+    processor.connect(muteNode);
+    muteNode.connect(audioContext.destination);
+    processor.onaudioprocess = (event) => {
+      if (!socket || socket.readyState !== WebSocket.OPEN || assistantSpeaking) return;
+      const pcm = downsample(event.inputBuffer.getChannelData(0), audioContext.sampleRate);
+      if (pcm.length) socket.send(pcm.buffer);
+    };
+  }
+
+  async function startCall() {
+    startButton.disabled = true;
+    setStatus("Solicitando acceso al micrófono…");
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      await audioContext.resume();
+      const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+      socket = new WebSocket(protocol + "//" + location.host + "/ws/call/");
+      socket.binaryType = "arraybuffer";
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ type: "setup", commerce_id: commerceSelect.value, branch_id: branchSelect.value }));
+        startMicrophone();
+        stopButton.disabled = false;
+        setStatus("Conectando la llamada…");
+      };
+      socket.onmessage = (event) => {
+        if (event.data instanceof ArrayBuffer) {
+          audioDecodeQueue = audioDecodeQueue.then(() => playAudio(event.data)).catch(() => {});
+          return;
+        }
+        if (event.data === "STOP") {
+          for (const playingSource of activeSources) { try { playingSource.stop(); } catch (_) { } }
+          activeSources.clear();
+          isPlaying = false;
+          assistantSpeaking = false;
+          assistantTurnComplete = false;
+          interruptButton.hidden = true;
+          if (audioContext) nextAudioTime = audioContext.currentTime;
+          return;
+        }
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === "call_started") setStatus("En llamada con " + message.commerce + " · " + message.branch, "live");
+          if (message.type === "speech_state") {
+            if (message.speaking) {
+              assistantTurnComplete = false;
+              playbackFinishedNotified = false;
+              assistantSpeaking = true;
+              interruptButton.hidden = false;
+              if (status.dataset.state !== "error") setStatus("La asistente está respondiendo…", "live");
+            } else {
+              assistantTurnComplete = true;
+              finishAssistantSpeechIfReady();
+            }
+          }
+          if (message.type === "call_error") setStatus(message.message || "No se pudo iniciar la llamada.", "error");
+          if (message.type === "transcript") addTranscript(message.role, String(message.text || ""));
+          if (message.type === "order_update") renderOrder(message.data || {});
+          if (message.type === "save_error") setStatus(message.message || "No se pudo guardar el pedido.", "error");
+          if (message.type === "order_saved") {
+            const order = message.order || {};
+            savedMessage.textContent = "Pedido " + order.reference + " guardado. Ya aparece en el panel.";
+            savedMessage.classList.add("is-visible");
+            setStatus("Pedido confirmado y registrado.", "live");
+          }
+          if (message.type === "hangup") { setStatus("La llamada terminó."); if (socket) socket.close(); }
+        } catch (_) {
+          setStatus("Se recibió una respuesta que no se pudo procesar.", "error");
+        }
+      };
+      socket.onerror = () => setStatus("No se pudo conectar con el servidor de llamadas.", "error");
+      socket.onclose = () => {
+        if (stream) stream.getTracks().forEach((track) => track.stop());
+        if (processor) processor.disconnect();
+        if (micSource) micSource.disconnect();
+        if (muteNode) muteNode.disconnect();
+        if (audioContext) audioContext.close();
+        stream = audioContext = processor = micSource = muteNode = null;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        isPlaying = false;
+        if (status.dataset.state !== "error" && status.dataset.state !== "live") setStatus("Llamada terminada.");
+      };
+    } catch (error) {
+      if (stream) stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+      startButton.disabled = false;
+      setStatus("No se pudo iniciar el micrófono. Revisa el permiso del navegador.", "error");
+    }
+  }
+
+  startButton.addEventListener("click", startCall);
+  interruptButton.addEventListener("click", () => {
+    if (socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "interrupt" }));
+    for (const source of activeSources) { try { source.stop(); } catch (_) { } }
+    activeSources.clear();
+    isPlaying = false;
+    assistantSpeaking = false;
+    assistantTurnComplete = false;
+    interruptButton.hidden = true;
+    if (audioContext) nextAudioTime = audioContext.currentTime;
+    setStatus("Respuesta interrumpida; puedes hablar.", "live");
+  });
+  stopButton.addEventListener("click", () => {
+    if (socket && socket.readyState === WebSocket.OPEN) socket.close(1000);
+  });
+})();
+</script>
+{% endblock %}

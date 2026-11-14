@@ -1,3 +1,7 @@
+from pathlib import Path
+
+from django.http import FileResponse
+from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
@@ -281,3 +285,22 @@ class ConfiguracionDeleteView(ManagedDeleteView):
     permission_required = "comercios.delete_configuracioncomercio"
     page_title = "Eliminar configuración de comercio"
     list_url_name = "comercios:configuracion-list"
+
+def inicio(request):
+    return render(request, "gestion/inicio.html")
+
+
+
+def logo(request):
+    logo_path = Path(__file__).resolve().parent / "templates" / "gestion" / "voxcentra-logo.png"
+    return FileResponse(logo_path.open("rb"), content_type="image/png")
+
+
+def home_art(request):
+    artwork_path = Path(__file__).resolve().parent / "templates" / "gestion" / "voxcentra-home.png"
+    return FileResponse(artwork_path.open("rb"), content_type="image/png")
+
+
+def home_video(request):
+    video_path = Path(__file__).resolve().parent / "templates" / "gestion" / "voxcentravideo.mp4"
+    return FileResponse(video_path.open("rb"), content_type="video/mp4")

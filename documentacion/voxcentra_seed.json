@@ -1,0 +1,918 @@
+[
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "VoxCentra Demo · Solo lectura",
+      "permissions": [
+        [
+          "view_categoria",
+          "catalogo",
+          "categoria"
+        ],
+        [
+          "view_grupoopcion",
+          "catalogo",
+          "grupoopcion"
+        ],
+        [
+          "view_opcionproducto",
+          "catalogo",
+          "opcionproducto"
+        ],
+        [
+          "view_producto",
+          "catalogo",
+          "producto"
+        ],
+        [
+          "view_sucursalproducto",
+          "catalogo",
+          "sucursalproducto"
+        ],
+        [
+          "view_cliente",
+          "clientes",
+          "cliente"
+        ],
+        [
+          "view_direccioncliente",
+          "clientes",
+          "direccioncliente"
+        ],
+        [
+          "view_comercio",
+          "comercios",
+          "comercio"
+        ],
+        [
+          "view_configuracioncomercio",
+          "comercios",
+          "configuracioncomercio"
+        ],
+        [
+          "view_sucursal",
+          "comercios",
+          "sucursal"
+        ],
+        [
+          "view_interaccion",
+          "interacciones",
+          "interaccion"
+        ],
+        [
+          "view_detallepedido",
+          "pedidos",
+          "detallepedido"
+        ],
+        [
+          "view_direccionpedido",
+          "pedidos",
+          "direccionpedido"
+        ],
+        [
+          "view_historialpedido",
+          "pedidos",
+          "historialpedido"
+        ],
+        [
+          "view_opciondetalle",
+          "pedidos",
+          "opciondetalle"
+        ],
+        [
+          "view_pago",
+          "pedidos",
+          "pago"
+        ],
+        [
+          "view_pedido",
+          "pedidos",
+          "pedido"
+        ]
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "VoxCentra Demo · Operación",
+      "permissions": [
+        [
+          "add_categoria",
+          "catalogo",
+          "categoria"
+        ],
+        [
+          "change_categoria",
+          "catalogo",
+          "categoria"
+        ],
+        [
+          "view_categoria",
+          "catalogo",
+          "categoria"
+        ],
+        [
+          "add_grupoopcion",
+          "catalogo",
+          "grupoopcion"
+        ],
+        [
+          "change_grupoopcion",
+          "catalogo",
+          "grupoopcion"
+        ],
+        [
+          "view_grupoopcion",
+          "catalogo",
+          "grupoopcion"
+        ],
+        [
+          "add_opcionproducto",
+          "catalogo",
+          "opcionproducto"
+        ],
+        [
+          "change_opcionproducto",
+          "catalogo",
+          "opcionproducto"
+        ],
+        [
+          "view_opcionproducto",
+          "catalogo",
+          "opcionproducto"
+        ],
+        [
+          "add_producto",
+          "catalogo",
+          "producto"
+        ],
+        [
+          "change_producto",
+          "catalogo",
+          "producto"
+        ],
+        [
+          "view_producto",
+          "catalogo",
+          "producto"
+        ],
+        [
+          "add_sucursalproducto",
+          "catalogo",
+          "sucursalproducto"
+        ],
+        [
+          "change_sucursalproducto",
+          "catalogo",
+          "sucursalproducto"
+        ],
+        [
+          "view_sucursalproducto",
+          "catalogo",
+          "sucursalproducto"
+        ],
+        [
+          "add_cliente",
+          "clientes",
+          "cliente"
+        ],
+        [
+          "change_cliente",
+          "clientes",
+          "cliente"
+        ],
+        [
+          "view_cliente",
+          "clientes",
+          "cliente"
+        ],
+        [
+          "add_direccioncliente",
+          "clientes",
+          "direccioncliente"
+        ],
+        [
+          "change_direccioncliente",
+          "clientes",
+          "direccioncliente"
+        ],
+        [
+          "view_direccioncliente",
+          "clientes",
+          "direccioncliente"
+        ],
+        [
+          "add_comercio",
+          "comercios",
+          "comercio"
+        ],
+        [
+          "change_comercio",
+          "comercios",
+          "comercio"
+        ],
+        [
+          "view_comercio",
+          "comercios",
+          "comercio"
+        ],
+        [
+          "add_configuracioncomercio",
+          "comercios",
+          "configuracioncomercio"
+        ],
+        [
+          "change_configuracioncomercio",
+          "comercios",
+          "configuracioncomercio"
+        ],
+        [
+          "view_configuracioncomercio",
+          "comercios",
+          "configuracioncomercio"
+        ],
+        [
+          "add_sucursal",
+          "comercios",
+          "sucursal"
+        ],
+        [
+          "change_sucursal",
+          "comercios",
+          "sucursal"
+        ],
+        [
+          "view_sucursal",
+          "comercios",
+          "sucursal"
+        ],
+        [
+          "add_interaccion",
+          "interacciones",
+          "interaccion"
+        ],
+        [
+          "change_interaccion",
+          "interacciones",
+          "interaccion"
+        ],
+        [
+          "view_interaccion",
+          "interacciones",
+          "interaccion"
+        ],
+        [
+          "add_detallepedido",
+          "pedidos",
+          "detallepedido"
+        ],
+        [
+          "change_detallepedido",
+          "pedidos",
+          "detallepedido"
+        ],
+        [
+          "view_detallepedido",
+          "pedidos",
+          "detallepedido"
+        ],
+        [
+          "add_direccionpedido",
+          "pedidos",
+          "direccionpedido"
+        ],
+        [
+          "change_direccionpedido",
+          "pedidos",
+          "direccionpedido"
+        ],
+        [
+          "view_direccionpedido",
+          "pedidos",
+          "direccionpedido"
+        ],
+        [
+          "add_historialpedido",
+          "pedidos",
+          "historialpedido"
+        ],
+        [
+          "change_historialpedido",
+          "pedidos",
+          "historialpedido"
+        ],
+        [
+          "view_historialpedido",
+          "pedidos",
+          "historialpedido"
+        ],
+        [
+          "add_opciondetalle",
+          "pedidos",
+          "opciondetalle"
+        ],
+        [
+          "change_opciondetalle",
+          "pedidos",
+          "opciondetalle"
+        ],
+        [
+          "view_opciondetalle",
+          "pedidos",
+          "opciondetalle"
+        ],
+        [
+          "add_pago",
+          "pedidos",
+          "pago"
+        ],
+        [
+          "change_pago",
+          "pedidos",
+          "pago"
+        ],
+        [
+          "view_pago",
+          "pedidos",
+          "pago"
+        ],
+        [
+          "add_pedido",
+          "pedidos",
+          "pedido"
+        ],
+        [
+          "change_pedido",
+          "pedidos",
+          "pedido"
+        ],
+        [
+          "view_pedido",
+          "pedidos",
+          "pedido"
+        ]
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$pRXTQ9dMg3KH1kTB9ch7Qq$RV9zZS5y4NDJsA+3FUpJ++mK/2tF53FNqrqwBeqZZGw=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "demo_admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "demo_admin@example.test",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-11-14T04:38:27.075Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$6C0ygj4xbFvbQioVVkOKew$k7/aE2BreePQbWCHLhbcjSKGgfadhVO69oJn6GrLpe8=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "demo_operador",
+      "first_name": "",
+      "last_name": "",
+      "email": "demo_operador@example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-14T04:38:27.690Z",
+      "groups": [
+        [
+          "VoxCentra Demo · Operación"
+        ]
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$tdfFSJHcsHsunCYjGIusK3$FRpQ0wuspfIb2z72TvLF/0V4ORLMJEeGmaEUs/eK/AM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "demo_lector",
+      "first_name": "",
+      "last_name": "",
+      "email": "demo_lector@example.test",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-11-14T04:38:28.300Z",
+      "groups": [
+        [
+          "VoxCentra Demo · Solo lectura"
+        ]
+      ],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "comercios.comercio",
+    "pk": 1,
+    "fields": {
+      "nombre_comercial": "VoxCentraAI · Restaurante de demostración",
+      "slug": "voxcentra-demo",
+      "giro": "Restaurante de comida rápida",
+      "moneda": "MXN",
+      "zona_horaria": "America/Mexico_City",
+      "estado": "activo",
+      "creado_en": "2026-11-14T04:38:27.059Z"
+    }
+  },
+  {
+    "model": "comercios.sucursal",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "nombre": "Sucursal de prueba",
+      "direccion": "Av. Ficticia 100, Colonia Centro, Ciudad de México",
+      "activa": true
+    }
+  },
+  {
+    "model": "comercios.configuracioncomercio",
+    "pk": 1,
+    "fields": {
+      "saludo": "Buenas tardes, le atiende Lucía, asistente virtual de VoxCentraAI · Restaurante de demostración. ¿Qué le gustaría ordenar?",
+      "instrucciones_atencion": "Atiende con amabilidad. Confirma productos, cantidades, entrega y total antes de registrar el pedido.",
+      "canal_voz_activo": true,
+      "actualizado_en": "2026-11-14T04:38:27.061Z"
+    }
+  },
+  {
+    "model": "accesos.membresiacomercio",
+    "pk": 1,
+    "fields": {
+      "usuario": [
+        "demo_admin"
+      ],
+      "comercio": 1,
+      "rol": "Administrador",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:28.916Z"
+    }
+  },
+  {
+    "model": "accesos.membresiacomercio",
+    "pk": 2,
+    "fields": {
+      "usuario": [
+        "demo_operador"
+      ],
+      "comercio": 1,
+      "rol": "Operación",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:28.916Z"
+    }
+  },
+  {
+    "model": "accesos.membresiacomercio",
+    "pk": 3,
+    "fields": {
+      "usuario": [
+        "demo_lector"
+      ],
+      "comercio": 1,
+      "rol": "Solo lectura",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:28.917Z"
+    }
+  },
+  {
+    "model": "catalogo.categoria",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "categoria_padre": null,
+      "nombre": "Pizzas",
+      "orden": 0,
+      "activa": true
+    }
+  },
+  {
+    "model": "catalogo.categoria",
+    "pk": 2,
+    "fields": {
+      "comercio": 1,
+      "categoria_padre": null,
+      "nombre": "Hamburguesas",
+      "orden": 0,
+      "activa": true
+    }
+  },
+  {
+    "model": "catalogo.categoria",
+    "pk": 3,
+    "fields": {
+      "comercio": 1,
+      "categoria_padre": null,
+      "nombre": "Bebidas",
+      "orden": 0,
+      "activa": true
+    }
+  },
+  {
+    "model": "catalogo.categoria",
+    "pk": 4,
+    "fields": {
+      "comercio": 1,
+      "categoria_padre": null,
+      "nombre": "Combos",
+      "orden": 0,
+      "activa": true
+    }
+  },
+  {
+    "model": "catalogo.categoria",
+    "pk": 5,
+    "fields": {
+      "comercio": 1,
+      "categoria_padre": null,
+      "nombre": "Complementos",
+      "orden": 0,
+      "activa": true
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "categoria": 1,
+      "sku": "PIZ-PEP",
+      "nombre": "Pizza de Pepperoni",
+      "descripcion": "Pizza tradicional con pepperoni.",
+      "precio_base": "150.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.063Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 2,
+    "fields": {
+      "comercio": 1,
+      "categoria": 1,
+      "sku": "PIZ-HAW",
+      "nombre": "Pizza Hawaiana",
+      "descripcion": "Pizza con jamón y piña.",
+      "precio_base": "160.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.065Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 3,
+    "fields": {
+      "comercio": 1,
+      "categoria": 2,
+      "sku": "HAM-CLA",
+      "nombre": "Hamburguesa Clásica",
+      "descripcion": "Carne, queso, lechuga y tomate.",
+      "precio_base": "90.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.066Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 4,
+    "fields": {
+      "comercio": 1,
+      "categoria": 3,
+      "sku": "BEB-COL-600",
+      "nombre": "Refresco de Cola 600 ml",
+      "descripcion": "Refresco embotellado de 600 ml.",
+      "precio_base": "30.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.068Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 5,
+    "fields": {
+      "comercio": 1,
+      "categoria": 3,
+      "sku": "BEB-AGU-500",
+      "nombre": "Agua natural 500 ml",
+      "descripcion": "Botella de agua natural.",
+      "precio_base": "20.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.069Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 6,
+    "fields": {
+      "comercio": 1,
+      "categoria": 4,
+      "sku": "COM-PIZ-COL",
+      "nombre": "Combo Pizza Pepperoni",
+      "descripcion": "Pizza de pepperoni y refresco de cola de 600 ml.",
+      "precio_base": "170.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.070Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 7,
+    "fields": {
+      "comercio": 1,
+      "categoria": 4,
+      "sku": "COM-HAM-COL",
+      "nombre": "Combo Hamburguesa",
+      "descripcion": "Hamburguesa clásica y refresco de cola de 600 ml.",
+      "precio_base": "110.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.072Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 8,
+    "fields": {
+      "comercio": 1,
+      "categoria": 5,
+      "sku": "COM-PAP-CLA",
+      "nombre": "Papas clásicas",
+      "descripcion": "Porción individual de papas.",
+      "precio_base": "45.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.073Z"
+    }
+  },
+  {
+    "model": "catalogo.producto",
+    "pk": 9,
+    "fields": {
+      "comercio": 1,
+      "categoria": 5,
+      "sku": "COM-EXT-QUE",
+      "nombre": "Extra queso",
+      "descripcion": "Porción de queso adicional.",
+      "precio_base": "25.00",
+      "activo": true,
+      "creado_en": "2026-11-14T04:38:27.074Z"
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      1
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 1,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      2
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 2,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      3
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 3,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      4
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 4,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      5
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 5,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      6
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 6,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      7
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 7,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      8
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 8,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "catalogo.sucursalproducto",
+    "pk": [
+      1,
+      9
+    ],
+    "fields": {
+      "sucursal": 1,
+      "producto": 9,
+      "precio_override": null,
+      "disponible": true
+    }
+  },
+  {
+    "model": "clientes.cliente",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "nombre": "Cliente ficticio de prueba",
+      "telefono": "+52 55 0000 0001",
+      "correo": "cliente@example.test",
+      "creado_en": "2026-11-14T04:38:28.918Z"
+    }
+  },
+  {
+    "model": "clientes.direccioncliente",
+    "pk": 1,
+    "fields": {
+      "cliente": 1,
+      "alias": "Domicilio de prueba",
+      "calle": "Calle Ficticia",
+      "numero_exterior": "100",
+      "numero_interior": null,
+      "colonia": "Centro",
+      "ciudad": "Ciudad de México",
+      "codigo_postal": "06000",
+      "referencias": "Dirección de demostración; no corresponde a un domicilio real.",
+      "predeterminada": true
+    }
+  },
+  {
+    "model": "interacciones.interaccion",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "sucursal": 1,
+      "cliente": 1,
+      "canal": "voz_prueba",
+      "estado": "pedido registrado",
+      "iniciada_en": "2026-11-14T04:38:28.919Z",
+      "terminada_en": null,
+      "referencia_externa": "SEED-VOZ-001"
+    }
+  },
+  {
+    "model": "pedidos.pedido",
+    "pk": 1,
+    "fields": {
+      "comercio": 1,
+      "sucursal": 1,
+      "cliente": 1,
+      "interaccion": 1,
+      "creado_por": [
+        "demo_operador"
+      ],
+      "origen": "seed_demo",
+      "estado": "recibido",
+      "tipo_entrega": "domicilio",
+      "moneda": "MXN",
+      "subtotal": "180.00",
+      "descuento": "0.00",
+      "impuestos": "0.00",
+      "total": "180.00",
+      "notas": "PEDIDO FICTICIO DE SEED PARA PRUEBAS. No preparar ni entregar.",
+      "creado_en": "2026-11-14T04:38:28.920Z",
+      "actualizado_en": "2026-11-14T04:38:28.920Z"
+    }
+  },
+  {
+    "model": "pedidos.direccionpedido",
+    "pk": 1,
+    "fields": {
+      "calle": "Calle Ficticia",
+      "numero_exterior": "100",
+      "numero_interior": null,
+      "colonia": "Centro",
+      "ciudad": "Ciudad de México",
+      "codigo_postal": "06000",
+      "referencias": "Domicilio ficticio de demostración. No corresponde a un domicilio real."
+    }
+  },
+  {
+    "model": "pedidos.detallepedido",
+    "pk": 1,
+    "fields": {
+      "pedido": 1,
+      "producto": 1,
+      "sku_snapshot": "PIZ-PEP",
+      "nombre_snapshot": "Pizza de Pepperoni",
+      "cantidad": 1,
+      "precio_unitario": "150.00",
+      "notas": "Sin cambios; dato ficticio."
+    }
+  },
+  {
+    "model": "pedidos.detallepedido",
+    "pk": 2,
+    "fields": {
+      "pedido": 1,
+      "producto": 4,
+      "sku_snapshot": "BEB-COL-600",
+      "nombre_snapshot": "Refresco de Cola 600 ml",
+      "cantidad": 1,
+      "precio_unitario": "30.00",
+      "notas": ""
+    }
+  },
+  {
+    "model": "pedidos.pago",
+    "pk": 1,
+    "fields": {
+      "pedido": 1,
+      "metodo": "efectivo",
+      "estado": "pendiente",
+      "importe": "180.00",
+      "referencia_externa": null,
+      "creado_en": "2026-11-14T04:38:28.921Z",
+      "pagado_en": null
+    }
+  },
+  {
+    "model": "pedidos.historialpedido",
+    "pk": 1,
+    "fields": {
+      "pedido": 1,
+      "estado_anterior": null,
+      "estado_nuevo": "recibido",
+      "cambiado_por": [
+        "demo_operador"
+      ],
+      "nota": "Registro ficticio creado por seed_voxcentra.",
+      "creado_en": "2026-11-14T04:38:28.922Z"
+    }
+  }
+]

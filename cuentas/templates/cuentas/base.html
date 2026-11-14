@@ -1,56 +1,145 @@
 <!doctype html>
 <html lang="es-MX">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}VoxCentra{% endblock %}</title>
-    <style>
-        :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172033; background: #f4f6fb; }
-        body { margin: 0; }
-        header { background: #182b55; color: white; padding: 1rem max(1rem, calc((100% - 980px) / 2)); }
-        header a { color: white; text-decoration: none; margin-right: 1rem; }
-        main { max-width: 980px; margin: 2rem auto; padding: 0 1rem 3rem; }
-        .card { background: white; border: 1px solid #d9dfeb; border-radius: .7rem; padding: 1.25rem; margin: 1rem 0; }
-        .button, button { display: inline-block; border: 0; border-radius: .4rem; padding: .65rem .9rem; background: #2157c5; color: white; text-decoration: none; font: inherit; cursor: pointer; }
-        .button.secondary { background: #58657d; }
-        .button.danger { background: #a32937; }
-        input, select, textarea { box-sizing: border-box; max-width: 100%; padding: .55rem; border: 1px solid #aeb8ca; border-radius: .35rem; }
-        input:not([type=checkbox]):not([type=radio]), textarea { width: 100%; }
-        label { font-weight: 600; }
-        form p { margin: 1rem 0; }
-        .field-select-multiple { min-width: 18rem; min-height: 8rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: .7rem; border-bottom: 1px solid #e0e5ee; vertical-align: top; }
-        .messages { list-style: none; padding: 0; }
-        .messages li { background: #e7f5e9; border: 1px solid #a7d4ad; padding: .8rem; margin-bottom: .5rem; border-radius: .4rem; }
-        .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
-        .inline-form { display: inline; }
-        .errorlist { color: #a32937; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090a0d">
+  <title>{% block title %}VoxCentraAI{% endblock %}</title>
+  <style nonce="{{ csp_nonce }}">
+    :root { color-scheme: dark; font-family: "Segoe UI", Arial, sans-serif; color: #f3f1ef; background: #090a0d; --orange: #ff8500; --orange-soft: #ffad47; --muted: #9b9fa8; --line: rgba(255,255,255,.09); --panel: #11141a; --raised: #171b22; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; background: #090a0d; }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+    .skip-link { position: fixed; z-index: 20; top: 8px; left: 8px; padding: 9px 13px; color: #171008; background: var(--orange); border-radius: 5px; transform: translateY(-150%); }
+    .skip-link:focus { transform: translateY(0); }
+    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 224px minmax(0,1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; min-height: 620px; padding: 20px 14px 15px; display: flex; flex-direction: column; background: #101318; border-right: 1px solid var(--line); overflow-y: auto; scrollbar-width: thin; }
+    .brand { min-height: 57px; padding: 0 9px 17px; display: flex; align-items: center; border-bottom: 1px solid var(--line); }
+    .brand img { display: block; width: 158px; height: 46px; object-fit: contain; object-position: left center; }
+    .nav-label { margin: 24px 10px 9px; color: #737984; font-size: 9px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; }
+    .side-nav { display: grid; gap: 5px; }
+    .nav-link { min-height: 42px; padding: 0 11px; display: flex; align-items: center; gap: 11px; color: #aeb2bb; background: transparent; border: 1px solid transparent; border-radius: 7px; font-size: 12px; text-decoration: none; transition: color .16s ease, background .16s ease, border-color .16s ease; }
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,.045); }
+    .nav-link[aria-current="page"] { color: #fff; background: rgba(255,133,0,.105); border-color: rgba(255,133,0,.32); }
+    .nav-link svg { width: 16px; height: 16px; flex: 0 0 auto; color: #818792; }
+    .nav-link[aria-current="page"] svg { color: var(--orange); }
+    .sidebar-spacer { flex: 1; }
+    .sidebar-account { min-height: 59px; padding: 9px; display: flex; align-items: center; gap: 10px; background: #171b22; border: 1px solid var(--line); border-radius: 8px; }
+    .account-mark { width: 32px; height: 32px; flex: 0 0 auto; display: grid; place-items: center; color: var(--orange-soft); background: rgba(255,133,0,.12); border: 1px solid rgba(255,133,0,.22); border-radius: 50%; font-size: 9px; font-weight: 700; }
+    .account-copy { min-width: 0; }
+    .account-copy strong, .account-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .account-copy strong { color: #f0eeee; font-size: 11px; font-weight: 600; }
+    .account-copy span { margin-top: 3px; color: #818691; font-size: 9px; }
+    .workspace { min-width: 0; }
+    .topbar { height: 58px; padding: 0 clamp(22px, 3vw, 44px); display: flex; align-items: center; justify-content: space-between; background: rgba(12,14,18,.86); border-bottom: 1px solid var(--line); }
+    .breadcrumb { min-width: 0; display: flex; align-items: center; gap: 8px; overflow: hidden; color: #a0a4ad; font-size: 10px; white-space: nowrap; }
+    .breadcrumb span:first-child { color: #6f7580; }
+    .breadcrumb svg { width: 11px; height: 11px; flex: 0 0 auto; color: #666c76; }
+    .top-user { display: flex; align-items: center; gap: 10px; }
+    .top-user-name { max-width: 150px; overflow: hidden; color: #a5a9b1; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .logout-form { margin: 0; }
+    .logout-button { min-height: 32px; padding: 0 10px; color: #dedcda; background: #1a1e25; border: 1px solid var(--line); border-radius: 5px; font: inherit; font-size: 10px; cursor: pointer; }
+    .logout-button:hover { color: var(--orange-soft); border-color: rgba(255,133,0,.28); }
+    main { width: min(1380px, 100%); margin: 0 auto; padding: clamp(26px, 3vw, 42px) clamp(22px, 3vw, 44px) 32px; }
+    h1 { margin: 0; color: #f5f3f1; font-size: clamp(26px, 3vw, 34px); font-weight: 650; letter-spacing: -.045em; }
+    h2 { margin: 0; color: #efedeb; font-size: 15px; font-weight: 620; }
+    p { color: var(--muted); line-height: 1.6; }
+    .eyebrow { margin: 0 0 8px; color: var(--orange-soft); font-size: 9px; font-weight: 650; letter-spacing: .15em; text-transform: uppercase; }
+    .page-heading { margin-bottom: 23px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    .page-description { margin: 7px 0 0; color: var(--muted); font-size: 11px; }
+    .content-card, .card { min-width: 0; padding: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; }
+    .content-card + .content-card, .card + .card { margin-top: 14px; }
+    .primary-link, a.button, button { min-height: 36px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; color: #1a1006; background: var(--orange); border: 1px solid rgba(255,181,89,.38); border-radius: 5px; font: inherit; font-size: 10px; font-weight: 650; text-decoration: none; cursor: pointer; transition: background .16s ease, transform .16s ease; }
+    .primary-link:hover, a.button:hover, button:hover { background: #ff9a20; transform: translateY(-1px); }
+    a.button.secondary, button.secondary { color: #d9d9db; background: #1b1f26; border-color: var(--line); }
+    a.button.secondary:hover, button.secondary:hover { color: var(--orange-soft); background: #232730; }
+    a.button.danger, button.danger { color: #ffd5cc; background: #3a201c; border-color: rgba(230,111,89,.27); }
+    .notice { margin: 0 0 12px; padding: 10px 12px; color: #e6d9ca; background: #19140f; border: 1px solid rgba(255,133,0,.22); border-radius: 5px; font-size: 10px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; color: #d4d4d7; font-size: 10px; }
+    th, td { padding: 11px 9px; border-bottom: 1px solid rgba(255,255,255,.07); text-align: left; vertical-align: middle; }
+    th { color: #9297a1; background: #171a20; font-size: 9px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+    tbody tr:hover { background: rgba(255,255,255,.018); }
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+    .directory-head { margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .directory-head p { margin: 4px 0 0; font-size: 9px; }
+    .empty-state { min-height: 145px; display: grid; place-items: center; color: #898e98; font-size: 11px; text-align: center; }
+    form { max-width: 720px; }
+    form p { margin: 13px 0; }
+    form label { margin-bottom: 5px; display: block; color: #dedcda; font-size: 10px; font-weight: 600; }
+    form input:not([type=checkbox]):not([type=radio]), form textarea, form select { width: 100%; max-width: 100%; padding: 9px 10px; color: #f1efed; background: #0c0e12; border: 1px solid rgba(255,255,255,.16); border-radius: 5px; font: inherit; font-size: 11px; }
+    form input[type=checkbox], form input[type=radio] { accent-color: var(--orange); }
+    form select[multiple] { min-height: 150px; }
+    .helptext { margin-top: 4px; display: block; color: #7e838d; font-size: 9px; }
+    .errorlist { margin: 5px 0; color: #ffad9e; font-size: 10px; }
+    .messages { margin: 0 0 16px; padding: 0; list-style: none; }
+    .messages li { padding: 10px 12px; color: #d8eadd; background: #13221a; border: 1px solid rgba(111,187,136,.23); border-radius: 5px; font-size: 10px; }
+    .form-actions { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .confirm-copy { margin: 8px 0 20px; color: #b3b5bc; font-size: 12px; }
+    @media (max-width: 760px) {
+      .app-shell { display: block; }
+      .sidebar { position: static; width: 100%; height: auto; min-height: 0; padding: 7px 13px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .brand { min-height: 42px; padding: 0 3px; border-bottom: 0; }
+      .brand img { width: 135px; height: 39px; }
+      .nav-label, .sidebar-spacer, .sidebar-account { display: none; }
+      .side-nav { display: flex; overflow-x: auto; gap: 4px; padding-bottom: 7px; scrollbar-width: thin; }
+      .nav-link { min-height: 32px; padding: 0 9px; flex: 0 0 auto; font-size: 9px; }
+      .nav-link svg { width: 13px; height: 13px; }
+      .topbar { height: 44px; padding-inline: 15px; }
+      .top-user-name { display: none; }
+      main { padding: 22px 15px 30px; }
+    }
+    @media (max-width: 470px) { .top-user .logout-button { min-height: 29px; font-size: 9px; } .page-heading { align-items: flex-start; flex-direction: column; } .content-card { padding: 13px; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+  {% block page_styles %}{% endblock %}
 </head>
 <body>
-<header>
-    <a href="{% url 'cuentas:dashboard' %}"><strong>VoxCentra</strong></a>
-    {% if user.is_authenticated %}
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="{% url 'cuentas:dashboard' %}" aria-label="VoxCentraAI, panel principal">
+        <img src="{% url 'comercios:logo' %}" alt="VoxCentraAI">
+      </a>
+      {% if user.is_authenticated %}
+        <p class="nav-label">Operación</p>
+        <nav class="side-nav" aria-label="Módulos">
+          <a class="nav-link" href="{% url 'cuentas:dashboard' %}" {% if request.resolver_match.namespace == 'cuentas' and request.resolver_match.url_name == 'dashboard' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>{% if user.is_superuser %}Panel administrador{% else %}Inicio{% endif %}
+          </a>
+          {% if perms.pedidos.add_pedido and perms.interacciones.add_interaccion %}<a class="nav-link" href="{% url 'test-call' %}" {% if request.resolver_match.url_name == 'test-call' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4m4-8v12m4-15v18m4-14v10m4-6v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Prueba de llamadas</a>{% endif %}
+          {% if perms.pedidos.view_pedido %}<a class="nav-link" href="{% url 'pedidos:pedido-list' %}" {% if request.resolver_match.namespace == 'pedidos' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Pedidos</a>{% endif %}
+          {% if perms.catalogo.view_producto %}<a class="nav-link" href="{% url 'catalogo:producto-list' %}" {% if request.resolver_match.namespace == 'catalogo' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Catálogo</a>{% endif %}
+          {% if perms.comercios.view_comercio %}<a class="nav-link" href="{% url 'comercios:comercio-list' %}" {% if request.resolver_match.namespace == 'comercios' and 'configuraciones' not in request.path %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10h16l-1.5-6h-13L4 10ZM6 10v10h12V10M9 20v-6h6v6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Comercios</a>{% endif %}
+          {% if perms.clientes.view_direccioncliente %}<a class="nav-link" href="{% url 'clientes:direccion-list' %}" {% if request.resolver_match.namespace == 'clientes' and 'direccion' in request.resolver_match.url_name %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>Direcciones</a>{% endif %}
+          {% if perms.clientes.view_cliente %}<a class="nav-link" href="{% url 'clientes:cliente-list' %}" {% if request.resolver_match.namespace == 'clientes' and 'cliente' in request.resolver_match.url_name %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a5.2 5.2 0 0 1 3.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Clientes</a>{% endif %}
+          {% if perms.interacciones.view_interaccion %}<a class="nav-link" href="{% url 'interacciones:interaccion-list' %}" {% if request.resolver_match.namespace == 'interacciones' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v12H9l-5 4V5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Interacciones</a>{% endif %}
+          {% if perms.comercios.view_configuracioncomercio %}<a class="nav-link" href="{% url 'comercios:configuracion-list' %}" {% if request.resolver_match.namespace == 'comercios' and 'configuraciones' in request.path %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 2.9-.2-.1a1.7 1.7 0 0 0-1.9.2l-.2.1h-3.4l-.1-.2a1.7 1.7 0 0 0-1.7-1l-.2.1-2.9-1.7.1-.2a1.7 1.7 0 0 0-.2-1.9l-.1-.2v-3.4l.2-.1a1.7 1.7 0 0 0 1-1.7l-.1-.2 1.7-2.9.2.1a1.7 1.7 0 0 0 1.9-.2l.2-.1h3.4l.1.2a1.7 1.7 0 0 0 1.7 1l.2-.1 2.9 1.7-.1.2a1.7 1.7 0 0 0 .2 1.9l.1.2v3.4Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>Configuración</a>{% endif %}
+        </nav>
         {% if user.is_superuser %}
-            <a href="{% url 'cuentas:user_list' %}">Usuarios</a>
-            <a href="{% url 'cuentas:group_list' %}">Grupos</a>
-            <a href="{% url 'cuentas:permission_list' %}">Permisos</a>
+          <p class="nav-label">Administración</p>
+          <nav class="side-nav" aria-label="Administración del sistema">
+            <a class="nav-link" href="{% url 'cuentas:user_list' %}" {% if request.resolver_match.namespace == 'cuentas' and 'user' in request.resolver_match.url_name %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 8h5M18.5 5.5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Usuarios</a>
+            <a class="nav-link" href="{% url 'cuentas:group_list' %}" {% if request.resolver_match.namespace == 'cuentas' and 'group' in request.resolver_match.url_name %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Grupos</a>
+            <a class="nav-link" href="{% url 'accesos:membresia-list' %}" {% if request.resolver_match.namespace == 'accesos' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v12H4zM8 10h8M8 14h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Accesos a comercios</a>
+            <a class="nav-link" href="{% url 'cuentas:permission_list' %}" {% if request.resolver_match.namespace == 'cuentas' and 'permission' in request.resolver_match.url_name %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 19 6v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Permisos</a>
+          </nav>
         {% endif %}
-        <span>{{ user.get_username }}</span>
-        <form class="inline-form" method="post" action="{% url 'cuentas:logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="button secondary">Cerrar sesión</button>
-        </form>
-    {% endif %}
-</header>
-<main>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
-        </ul>
-    {% endif %}
-    {% block content %}{% endblock %}
-</main>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-account"><span class="account-mark" aria-hidden="true">VC</span><div class="account-copy"><strong>{{ user.get_username }}</strong><span>{% if user.is_superuser %}Administrador{% else %}Cuenta del sistema{% endif %}</span></div></div>
+      {% endif %}
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb" aria-label="Ruta de navegación"><span>VoxCentraAI</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>{% if title %}{{ title }}{% elif user.is_superuser %}Panel administrador{% else %}Panel de usuario{% endif %}</span></div>
+        {% if user.is_authenticated %}<div class="top-user"><span class="top-user-name">{{ user.get_username }}</span><form class="logout-form" method="post" action="{% url 'cuentas:logout' %}">{% csrf_token %}<button class="logout-button" type="submit">Cerrar sesión</button></form></div>{% endif %}
+      </header>
+      <main id="main-content">
+        {% if messages %}<ul class="messages" role="status">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
 </body>
 </html>
