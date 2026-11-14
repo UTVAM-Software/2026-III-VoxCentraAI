@@ -1,0 +1,176 @@
+{% extends "cuentas/base.html" %}
+{% block title %}Clientes · VoxCentraAI{% endblock %}
+{% block page_styles %}<style nonce="{{ csp_nonce }}">
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .page-heading { margin-bottom: 27px; }
+  .page-description { line-height: 1.6; }
+  .primary-link { min-height: 40px; padding: 0 15px; gap: 9px; flex: 0 0 auto; border-radius: 6px; font-size: 11px; }
+  .primary-link svg { width: 15px; height: 15px; }
+  .metrics { margin-bottom: 25px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .metric { min-height: 108px; padding: 16px 17px; display: flex; align-items: center; gap: 13px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; }
+  .metric-icon { width: 38px; height: 38px; flex: 0 0 auto; display: grid; place-items: center; color: var(--orange); background: rgba(255,133,0,.09); border: 1px solid rgba(255,133,0,.19); border-radius: 8px; }
+  .metric-icon svg { width: 19px; height: 19px; }
+  .metric-copy { min-width: 0; }
+  .metric-label { margin: 0; color: #a4a8b1; font-size: 10px; }
+  .metric-value { margin: 6px 0 0; color: #f5f3f1; font-size: 23px; font-weight: 650; letter-spacing: -.03em; line-height: 1; }
+  .metric-note { margin: 5px 0 0; color: #737985; font-size: 9px; }
+  .directory { overflow: hidden; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  .directory-head { margin-bottom: 0; min-height: 72px; padding: 16px 19px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--line); }
+  .directory-title { margin: 0; color: #f0eef0; font-size: 15px; font-weight: 620; }
+  .directory-count { margin: 5px 0 0; color: #848a95; font-size: 10px; }
+  .search-form { width: min(340px, 48%); max-width: none; display: flex; gap: 8px; }
+  .search-field { margin: 0; min-width: 0; height: 37px; padding: 0 10px; display: flex; align-items: center; gap: 8px; flex: 1; background: #0c0e12; border: 1px solid rgba(255,255,255,.12); border-radius: 6px; }
+  .search-field svg { width: 15px; height: 15px; flex: 0 0 auto; color: #858b96; }
+  .search-field input { width: 100%; min-width: 0; color: #f4f2ef; background: transparent; border: 0; outline: 0; font: inherit; font-size: 11px; }
+  .search-field input::placeholder { color: #737985; }
+  .search-button { width: 38px; min-height: 37px; height: 37px; padding: 0; display: grid; place-items: center; flex: 0 0 auto; color: var(--orange); background: rgba(255,133,0,.08); border: 1px solid rgba(255,133,0,.27); border-radius: 6px; cursor: pointer; }
+  .search-button:hover { background: rgba(255,133,0,.16); transform: none; }
+  .search-button svg { width: 16px; height: 16px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; min-width: 740px; border-collapse: collapse; }
+  th { height: 40px; padding: 0 15px; color: #858b95; background: #13161c; border-bottom: 1px solid var(--line); font-size: 9px; font-weight: 600; letter-spacing: .07em; text-align: left; text-transform: uppercase; white-space: nowrap; }
+  td { height: 69px; padding: 10px 15px; color: #d6d6d9; border-bottom: 1px solid rgba(255,255,255,.055); font-size: 11px; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: rgba(255,255,255,.018); }
+  .client-cell { min-width: 220px; display: flex; align-items: center; gap: 11px; }
+  .client-avatar { width: 34px; height: 34px; flex: 0 0 auto; display: grid; place-items: center; color: var(--orange-soft); background: #26190f; border: 1px solid rgba(255,133,0,.23); border-radius: 50%; font-size: 11px; font-weight: 650; }
+  .client-copy { min-width: 0; }
+  .client-copy strong, .client-copy span { display: block; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-copy strong { color: #f2f0ef; font-size: 11px; font-weight: 600; }
+  .client-copy span { margin-top: 4px; color: #858b96; font-size: 10px; }
+  .commerce-name { color: #c3c5ca; }
+  .address-count { min-width: 24px; height: 24px; padding: 0 7px; display: inline-grid; place-items: center; color: #d6d4d1; background: #1b1e25; border: 1px solid var(--line); border-radius: 12px; font-size: 10px; }
+  .date-cell { color: #a0a3ab; white-space: nowrap; }
+  .row-actions { display: flex; justify-content: flex-end; gap: 7px; }
+  .action-link { min-height: 29px; padding: 0 9px; display: inline-flex; align-items: center; justify-content: center; color: #d3d4d7; background: #1a1d24; border: 1px solid rgba(255,255,255,.09); border-radius: 5px; font-size: 10px; text-decoration: none; }
+  .action-link:hover { color: var(--orange-soft); border-color: rgba(255,133,0,.3); }
+  .action-link.delete:hover { color: #ffad9e; border-color: rgba(237,114,94,.35); }
+  .empty-state { min-height: 185px; padding: 35px 18px; display: grid; place-items: center; text-align: center; }
+  .empty-icon { width: 42px; height: 42px; margin: 0 auto 12px; display: grid; place-items: center; color: #9b7957; background: rgba(255,133,0,.07); border: 1px solid rgba(255,133,0,.16); border-radius: 50%; }
+  .empty-icon svg { width: 19px; height: 19px; }
+  .empty-state h3 { margin: 0; color: #e2e0df; font-size: 13px; font-weight: 600; }
+  .empty-state p { margin: 7px 0 0; color: #858b96; font-size: 11px; }
+  .reset-link { margin-top: 12px; display: inline-block; color: var(--orange-soft); font-size: 10px; text-decoration: none; }
+  .pagination { min-height: 51px; padding: 9px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #858b96; border-top: 1px solid var(--line); font-size: 10px; }
+  .page-controls { display: flex; gap: 7px; }
+  .page-control { min-height: 29px; padding: 0 9px; display: inline-flex; align-items: center; justify-content: center; color: #d6d6d9; background: #191c22; border: 1px solid var(--line); border-radius: 5px; text-decoration: none; }
+  .page-control[aria-disabled="true"] { color: #626873; pointer-events: none; }
+  .page-control:hover { border-color: rgba(255,133,0,.28); }
+  .footer { padding: 15px 1px; display: flex; justify-content: space-between; gap: 12px; color: #666b75; font-size: 9px; }
+  @media (max-width: 1120px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .metrics { gap: 9px; } }
+  @media (max-width: 540px) {
+    .page-heading { margin-bottom: 21px; align-items: flex-start; flex-direction: column; gap: 15px; }
+    .metrics { gap: 8px; }
+    .metric { min-height: 91px; padding: 12px; gap: 10px; }
+    .metric-icon { width: 32px; height: 32px; }
+    .metric-value { font-size: 20px; }
+    .directory-head { align-items: flex-start; flex-direction: column; }
+    .search-form { width: 100%; }
+    .footer span:last-child { text-align: right; }
+  }
+</style>{% endblock %}
+{% block content %}<section class="page-heading" aria-labelledby="page-title">
+  <div>
+    <p class="eyebrow">Directorio</p>
+    <h1 id="page-title">Clientes</h1>
+    <p class="page-description">Consulta los contactos y las direcciones registradas para tus comercios.</p>
+  </div>
+  {% if can_create and has_commerces %}
+    <a class="primary-link" href="{{ create_url }}">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Registrar cliente
+    </a>
+  {% elif can_create_commerce and not has_commerces %}
+    <a class="primary-link" href="{% url 'comercios:comercio-create' %}">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Crear comercio
+    </a>
+  {% endif %}
+</section>
+
+<section class="metrics" aria-label="Resumen de clientes">
+  <article class="metric">
+    <span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a5.2 5.2 0 0 1 3.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+    <div class="metric-copy"><p class="metric-label">Clientes registrados</p><p class="metric-value">{{ total_clients }}</p><p class="metric-note">En tus comercios</p></div>
+  </article>
+  <article class="metric">
+    <span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h10v18H7zM10 6h4M10 18h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m10 12 1.5 1.5L15 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="metric-copy"><p class="metric-label">Con teléfono</p><p class="metric-value">{{ clients_with_phone }}</p><p class="metric-note">Dato de contacto capturado</p></div>
+  </article>
+  <article class="metric">
+    <span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="metric-copy"><p class="metric-label">Con correo</p><p class="metric-value">{{ clients_with_email }}</p><p class="metric-note">Dato de contacto capturado</p></div>
+  </article>
+  <article class="metric">
+    <span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg></span>
+    <div class="metric-copy"><p class="metric-label">Direcciones</p><p class="metric-value">{{ total_addresses }}</p><p class="metric-note">Registradas para clientes</p></div>
+  </article>
+</section>
+
+<section class="directory" aria-labelledby="directory-title">
+  <div class="directory-head">
+    <div>
+      <h2 class="directory-title" id="directory-title">Directorio de clientes</h2>
+      <p class="directory-count">{{ page_obj.paginator.count }} resultado{{ page_obj.paginator.count|pluralize:"s" }}</p>
+    </div>
+    <form class="search-form" method="get" action="{{ list_url }}" role="search">
+      <label class="search-field" for="client-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <input id="client-search" type="search" name="q" value="{{ query }}" maxlength="100" placeholder="Buscar nombre, teléfono o correo" autocomplete="off">
+      </label>
+      <button class="search-button" type="submit" aria-label="Buscar clientes">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+    </form>
+  </div>
+
+  {% if object_list %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Cliente</th><th scope="col">Comercio</th><th scope="col">Direcciones</th><th scope="col">Registro</th><th scope="col"><span class="visually-hidden">Acciones</span></th></tr></thead>
+        <tbody>
+          {% for client in object_list %}
+            <tr>
+              <td><div class="client-cell"><span class="client-avatar" aria-hidden="true">{{ client.nombre|slice:":1"|upper }}</span><div class="client-copy"><strong>{{ client.nombre }}</strong><span>{{ client.telefono|default:"Sin teléfono" }}{% if client.correo %} · {{ client.correo }}{% endif %}</span></div></div></td>
+              <td class="commerce-name">{{ client.comercio.nombre_comercial }}</td>
+              <td><span class="address-count" aria-label="{{ client.address_count }} direcciones">{{ client.address_count }}</span></td>
+              <td class="date-cell">{{ client.creado_en|date:"d/m/Y" }}</td>
+              <td><div class="row-actions">
+                {% if can_change_client %}<a class="action-link" href="{% url 'clientes:cliente-update' client.pk %}" aria-label="Editar a {{ client.nombre }}">Editar</a>{% endif %}
+                {% if can_delete_client %}<a class="action-link delete" href="{% url 'clientes:cliente-delete' client.pk %}" aria-label="Eliminar a {{ client.nombre }}">Eliminar</a>{% endif %}
+              </div></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="Paginación de clientes">
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        <div class="page-controls">
+          {% if page_obj.has_previous %}
+            <a class="page-control" href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ page_obj.previous_page_number }}" rel="prev">Anterior</a>
+          {% else %}<span class="page-control" aria-disabled="true">Anterior</span>{% endif %}
+          {% if page_obj.has_next %}
+            <a class="page-control" href="?{% if query %}q={{ query|urlencode }}&amp;{% endif %}page={{ page_obj.next_page_number }}" rel="next">Siguiente</a>
+          {% else %}<span class="page-control" aria-disabled="true">Siguiente</span>{% endif %}
+        </div>
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="empty-state">
+      <div>
+        <span class="empty-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a5.2 5.2 0 0 1 3.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+        {% if not has_commerces %}
+          <h3>Aún no hay comercios</h3>
+          <p>Primero registra el comercio al que pertenecerán sus clientes.</p>
+          {% if can_create_commerce %}<a class="reset-link" href="{% url 'comercios:comercio-create' %}">Crear el primer comercio</a>{% else %}<p>Solicita acceso a un comercio para continuar.</p>{% endif %}
+        {% elif query %}<h3>No hay coincidencias</h3><p>Prueba con otro nombre, teléfono o correo.</p><a class="reset-link" href="{{ list_url }}">Limpiar búsqueda</a>
+        {% else %}<h3>Aún no hay clientes registrados</h3><p>Los clientes que captures aparecerán en este directorio.</p>{% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+<footer class="footer"><span>VoxCentraAI · Gestión de clientes</span><span>Los datos visibles dependen de los permisos de tu cuenta.</span></footer>
+{% endblock %}

@@ -1,13 +1,14 @@
 {% extends "gestion/base.html" %}
 
-{% block title %}{{ title }} · VoxCentra{% endblock %}
+{% block title %}{{ title }} · VoxCentraAI{% endblock %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-    <a class="button secondary" href="{{ list_url }}">Cancelar</a>
-  </form>
+  <section class="page-heading"><div><p class="eyebrow">Gestión de datos</p><h1>{{ title }}</h1><p class="page-description">Completa los campos y guarda los cambios.</p></div></section>
+  <section class="content-card form-card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="form-actions"><button type="submit">Guardar</button><a class="button secondary" href="{{ list_url }}">Cancelar</a></div>
+    </form>
+  </section>
 {% endblock %}

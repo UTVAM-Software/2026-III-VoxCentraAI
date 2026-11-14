@@ -1,13 +1,14 @@
 {% extends "gestion/base.html" %}
 
-{% block title %}{{ title }} · VoxCentra{% endblock %}
+{% block title %}{{ title }} · VoxCentraAI{% endblock %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <p>¿Confirmas que deseas eliminar este registro?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button class="danger" type="submit">Eliminar</button>
-    <a class="button secondary" href="{{ list_url }}">Cancelar</a>
-  </form>
+  <section class="page-heading"><div><p class="eyebrow">Confirmación</p><h1>{{ title }}</h1></div></section>
+  <section class="content-card">
+    <p class="confirm-copy">¿Confirmas que deseas eliminar este registro?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions"><button class="danger" type="submit">Eliminar</button><a class="button secondary" href="{{ list_url }}">Cancelar</a></div>
+    </form>
+  </section>
 {% endblock %}
