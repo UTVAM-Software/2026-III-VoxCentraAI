@@ -53,6 +53,77 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     login_url = 'cuentas:login'
     template_name = 'cuentas/dashboard.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from catalogo.models import Producto
+        from clientes.models import Cliente
+        from comercios.access import accessible_commerces, accessible_sucursales, queryset_for_user
+        from comercios.models import Comercio
+        from pedidos.models import Pedido
+        from interacciones.models import Interaccion
+
+        user = self.request.user
+        read_only_profile = user.groups.filter(
+            name='VoxCentraAI · Solo lectura'
+        ).exists()
+        context['read_only_profile'] = read_only_profile
+        context['role_label'] = (
+            'Administrador' if user.is_superuser
+            else 'Solo lectura' if read_only_profile
+            else 'Cuenta operativa'
+        )
+        context['can_view_clients'] = user.has_perm('clientes.view_cliente')
+        context['can_view_commerces'] = user.has_perm('comercios.view_comercio')
+        context['can_view_catalog'] = user.has_perm('catalogo.view_producto')
+        context['can_view_orders'] = user.has_perm('pedidos.view_pedido')
+        context['can_view_interactions'] = user.has_perm('interacciones.view_interaccion')
+        context['can_view_config'] = user.has_perm('comercios.view_configuracioncomercio')
+
+        if user.is_superuser:
+            context.update(
+                account_count=User.objects.filter(is_active=True).count(),
+                commerce_count=Comercio.objects.count(),
+                client_count=Cliente.objects.count(),
+                product_count=Producto.objects.count(),
+                order_count=Pedido.objects.count(),
+                interaction_count=Interaccion.objects.count(),
+            )
+        else:
+            commerces = accessible_commerces(user)
+            allowed_branches = accessible_sucursales(user)
+            scoped_orders = queryset_for_user(
+                Pedido.objects.all(), user, 'comercio'
+            ).filter(sucursal__in=allowed_branches)
+            scoped_interactions = queryset_for_user(
+                Interaccion.objects.all(), user, 'comercio'
+            ).filter(sucursal__in=allowed_branches)
+            context.update(
+                account_count=None,
+                commerce_count=commerces.count(),
+                client_count=queryset_for_user(
+                    Cliente.objects.all(), user, 'comercio'
+                ).count(),
+                product_count=queryset_for_user(
+                    Producto.objects.all(), user, 'comercio'
+                ).count(),
+                order_count=scoped_orders.count(),
+                interaction_count=scoped_interactions.count(),
+            )
+        if user.is_superuser:
+            scoped_orders = Pedido.objects.all()
+            scoped_interactions = Interaccion.objects.all()
+        context['recent_orders'] = (
+            scoped_orders.select_related('comercio', 'cliente')
+            .order_by('-creado_en')[:5]
+            if context['can_view_orders'] else []
+        )
+        context['recent_interactions'] = (
+            scoped_interactions.select_related('comercio', 'cliente')
+            .order_by('-iniciada_en')[:5]
+            if context['can_view_interactions'] else []
+        )
+        return context
+
 
 class AuthRecordListView(SuperuserRequiredMixin, ListView):
     template_name = 'cuentas/object_list.html'

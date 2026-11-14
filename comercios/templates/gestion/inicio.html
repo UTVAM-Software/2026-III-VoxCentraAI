@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09090d">
+  <meta name="description" content="VoxCentraAI organiza la operación de comercios de comida y proyecta un flujo de pedidos por voz.">
+  <title>VoxCentraAI | Plataforma de voz</title>
+  <style nonce="{{ csp_nonce }}">
+    :root {
+      color-scheme: dark;
+      --ink: #09090d;
+      --paper: #f6f4f2;
+      --muted: #a7a4aa;
+      --line: rgba(255, 255, 255, .14);
+      --accent: #ff8500;
+      --accent-soft: #ffad47;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--ink);
+      color: var(--paper);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-width: 320px; scroll-behavior: smooth; background: var(--ink); }
+    body { min-width: 320px; margin: 0; background: var(--ink); }
+    a { color: inherit; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .skip-link {
+      position: fixed; z-index: 10; top: 8px; left: 8px;
+      transform: translateY(-160%); padding: 10px 14px;
+      color: var(--ink); background: var(--paper); border-radius: 4px;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .topbar {
+      position: absolute; z-index: 2; top: 0; left: 0; right: 0; height: 66px;
+      padding: 0 clamp(24px, 3vw, 52px);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(11, 11, 15, .68); border-bottom: 1px solid rgba(255, 255, 255, .12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .nav-links { position: absolute; left: max(24px, calc((100% - 1320px) / 2)); display: flex; align-items: center; gap: clamp(18px, 2.2vw, 34px); }
+    .nav-links a { color: #c7c5ce; font-size: 13px; text-decoration: none; transition: color .18s ease; }
+    .nav-links a:hover { color: #fff; }
+    .brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 184px; height: 62px; display: inline-flex; align-items: center; justify-content: center; }
+    .brand img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .top-action {
+      position: absolute; right: max(24px, calc((100% - 1320px) / 2)); min-height: 40px; padding: 0 16px;
+      display: inline-flex; align-items: center; gap: 10px;
+      color: #fff; background: rgba(255, 255, 255, .035); border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 9px; font-size: 13px; font-weight: 600; letter-spacing: .01em; text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .top-action:hover { background: rgba(255, 133, 0, .09); border-color: rgba(255, 133, 0, .75); }
+    .top-action svg, .button svg { width: 15px; height: 15px; }
+
+    .hero {
+      position: relative; isolation: isolate; min-height: 620px; overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(10, 8, 13, .12) 0%, rgba(9, 9, 13, .46) 35%, #09090d 96%),
+        linear-gradient(90deg, rgba(13, 8, 13, .4), rgba(9, 9, 13, .12) 48%, rgba(9, 9, 13, .48));
+    }
+    .hero-scene { position: absolute; z-index: -1; inset: 0; width: 100%; height: 100%; opacity: .74; pointer-events: none; }
+    .hero-inner { width: min(1320px, calc(100% - 96px)); margin-inline: auto; padding: 91px 0 24px; }
+    .masthead { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .masthead img {
+      display: block; width: clamp(230px, 26vw, 340px); height: auto;
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, .42));
+    }
+    .masthead p {
+      margin: 2px 0 0; color: #e3dce0; font-size: 12px; letter-spacing: .05em;
+      text-shadow: 0 2px 10px #09090d;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr);
+      align-items: center; gap: clamp(34px, 5.2vw, 82px);
+      margin: 27px auto 0; max-width: 1200px;
+    }
+    .product-art {
+      overflow: hidden; margin: 0; border: 1px solid rgba(236, 231, 238, .2);
+      border-radius: 11px; background: #100f13;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, .48);
+    }
+    .product-player { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #050507; }
+    .product-player video { display: block; width: 100%; height: 100%; background: #050507; object-fit: contain; }
+    .video-play {
+      position: absolute; top: 50%; left: 50%; z-index: 2; width: 56px; height: 56px;
+      display: grid; place-items: center; transform: translate(-50%, -50%);
+      color: #fff; background: #ff8500; border: 1px solid rgba(255, 255, 255, .34);
+      border-radius: 50%; box-shadow: 0 0 0 8px rgba(255, 133, 0, .16), 0 0 26px rgba(255, 133, 0, .4);
+      cursor: pointer; transition: box-shadow .18s ease, background .18s ease;
+    }
+    .video-play:hover { background: #ff9b24; box-shadow: 0 0 0 10px rgba(255, 133, 0, .2), 0 0 32px rgba(255, 133, 0, .5); }
+    .video-play svg { width: 36px; height: 36px; margin-left: 3px; }
+    .video-play[hidden] { display: none; }
+    .video-caption {
+      position: absolute; z-index: 1; right: 0; bottom: 0; left: 0; min-height: 58px;
+      padding: 9px 14px; display: flex; align-items: center; gap: 10px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .92));
+    }
+    .video-caption-mark { width: 22px; height: 22px; display: grid; place-items: center; color: var(--accent); }
+    .video-caption-mark svg { width: 17px; height: 17px; }
+    .video-caption-text { display: flex; flex-direction: column; gap: 2px; }
+    .video-caption-text strong { color: #f4f1f3; font-size: 12px; font-weight: 600; }
+    .video-caption-text span { color: #d0cbd0; font-size: 10px; }
+    .video-controls { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .video-control {
+      width: 32px; height: 32px; display: grid; place-items: center; padding: 0;
+      color: #f4f1f3; background: rgba(12, 11, 14, .58); border: 1px solid rgba(255, 255, 255, .24);
+      border-radius: 50%; cursor: pointer; transition: color .16s ease, border-color .16s ease, background .16s ease;
+    }
+    .video-control:hover { color: var(--accent-soft); background: rgba(12, 11, 14, .9); border-color: var(--accent); }
+    .video-control svg { width: 15px; height: 15px; }
+    .video-control svg[hidden] { display: none; }
+    .hero-copy { max-width: 500px; padding: 5px 0; }
+    .eyebrow {
+      margin: 0 0 15px; color: var(--accent-soft); font-size: 10px; font-weight: 600;
+      letter-spacing: .15em; text-transform: uppercase;
+    }
+    h1 {
+      max-width: 520px; margin: 0; font-size: clamp(36px, 4.1vw, 58px);
+      font-weight: 750; letter-spacing: -.052em; line-height: 1.03;
+    }
+    h1 em { color: var(--accent); font-style: normal; }
+    .hero-desc { max-width: 480px; margin: 19px 0 0; color: #c3c0c8; font-size: 15px; line-height: 1.75; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 23px; }
+    .button {
+      min-height: 46px; padding: 0 19px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 11px; border: 1px solid transparent; border-radius: 5px;
+      font-size: 13px; font-weight: 650; text-decoration: none;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { color: #17100a; background: var(--accent); box-shadow: 0 9px 28px rgba(255, 133, 0, .2); }
+    .button-primary:hover { background: #ff9b24; }
+    .button-secondary { color: #f3eff2; background: rgba(18, 17, 22, .4); border-color: rgba(255, 255, 255, .24); }
+    .button-secondary:hover { border-color: rgba(255, 255, 255, .54); }
+    .project-note { max-width: 450px; margin: 17px 0 0; color: #a09ba5; font-size: 11px; line-height: 1.6; }
+
+    .flow { width: min(1200px, calc(100% - 96px)); margin: 0 auto; padding: 21px 0 25px; border-top: 1px solid var(--line); }
+    .flow-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-bottom: 15px; }
+    .flow-head h2 { margin: 0; font-size: 17px; font-weight: 550; letter-spacing: -.02em; }
+    .flow-head p { margin: 0; color: #96939d; font-size: 10px; letter-spacing: .04em; }
+    .flow-steps { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .flow-step { min-height: 67px; padding: 14px 18px 13px 0; display: grid; grid-template-columns: 27px 1fr; align-content: center; column-gap: 10px; }
+    .flow-step + .flow-step { padding-left: 20px; border-left: 1px solid var(--line); }
+    .step-number { grid-row: 1 / span 2; color: var(--accent); font-size: 11px; letter-spacing: .08em; }
+    .flow-step strong { color: #eeebf0; font-size: 12px; font-weight: 600; }
+    .flow-step span:last-child { margin-top: 4px; color: #aaa7b0; font-size: 10px; line-height: 1.4; }
+    .footer {
+      width: min(1200px, calc(100% - 96px)); min-height: 39px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      color: #85828c; font-size: 10px;
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    @media (max-width: 980px) {
+      .hero { min-height: auto; }
+      .hero-inner { width: min(760px, calc(100% - 40px)); padding: 88px 0 34px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 28px; margin-top: 22px; }
+      .product-art { order: 2; }
+      .hero-copy { order: 1; max-width: 700px; }
+      h1 { max-width: 680px; }
+      .hero-desc { max-width: 650px; }
+      .flow, .footer { width: min(760px, calc(100% - 40px)); }
+    }
+    @media (max-width: 620px) {
+      .topbar { height: 60px; padding-inline: 16px; }
+      .nav-links { display: none; }
+      .brand { position: static; transform: none; width: 132px; height: 48px; }
+      .top-action { position: static; min-height: 38px; padding-inline: 11px; font-size: 11px; }
+      .top-action svg { width: 13px; height: 13px; }
+      .hero-inner { width: calc(100% - 32px); padding-top: 84px; }
+      .masthead img { width: min(76vw, 300px); }
+      .masthead p { max-width: 300px; font-size: 10px; line-height: 1.5; }
+      .hero-grid { margin-top: 25px; gap: 24px; }
+      .eyebrow { margin-bottom: 11px; font-size: 9px; }
+      h1 { font-size: clamp(35px, 10vw, 49px); }
+      .hero-desc { margin-top: 14px; font-size: 14px; line-height: 1.65; }
+      .hero-actions { gap: 9px; margin-top: 18px; }
+      .button { min-height: 43px; padding-inline: 14px; font-size: 12px; }
+      .project-note { margin-top: 13px; }
+      .flow { width: calc(100% - 32px); padding: 19px 0 22px; }
+      .flow-head { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .flow-head h2 { font-size: 16px; }
+      .flow-steps { grid-template-columns: 1fr; }
+      .flow-step, .flow-step + .flow-step { min-height: 57px; padding: 12px 2px; border-left: 0; }
+      .flow-step + .flow-step { border-top: 1px solid rgba(255, 255, 255, .12); }
+      .footer { width: calc(100% - 32px); min-height: 48px; font-size: 9px; }
+    }
+    @keyframes entrada-suave {
+      from { opacity: 0; transform: translate3d(0, 10px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+
+
+
+    .masthead { animation: entrada-suave .5s ease-out .22s both; }
+    .product-art { animation: entrada-suave .5s ease-out .34s both; }
+    .hero-copy { animation: entrada-suave .5s ease-out .44s both; }
+    .flow-head { animation: entrada-suave .42s ease-out .56s both; }
+    .flow-step { animation: entrada-suave .42s ease-out both; }
+    .flow-step:nth-child(1) { animation-delay: .62s; }
+    .flow-step:nth-child(2) { animation-delay: .70s; }
+    .flow-step:nth-child(3) { animation-delay: .78s; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="topbar">
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a href="#plataforma">Plataforma</a>
+      <a href="#flujo">Flujo operativo</a>
+    </nav>
+    <a class="brand" href="/" aria-label="VoxCentraAI, inicio">
+      <img src="{% url 'comercios:logo' %}" alt="VoxCentraAI">
+    </a>
+    <a class="top-action" href="{% url 'cuentas:login' %}">
+      Acceso al sistema
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </header>
+
+  <main id="contenido">
+    <section class="hero" id="plataforma" aria-labelledby="hero-title">
+      <svg class="hero-scene" viewBox="0 0 1600 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#39202a"/>
+            <stop offset=".38" stop-color="#75402f"/>
+            <stop offset=".67" stop-color="#e1783b"/>
+            <stop offset="1" stop-color="#291820"/>
+          </linearGradient>
+          <radialGradient id="sunset" cx=".52" cy=".46" r=".52">
+            <stop offset="0" stop-color="#ffb267" stop-opacity=".84"/>
+            <stop offset=".36" stop-color="#f15c42" stop-opacity=".26"/>
+            <stop offset="1" stop-color="#501c2c" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#18151b" stop-opacity=".04"/>
+            <stop offset="1" stop-color="#09090d" stop-opacity=".84"/>
+          </linearGradient>
+        </defs>
+        <rect width="1600" height="760" fill="url(#sky)"/>
+        <rect width="1600" height="760" fill="url(#sunset)"/>
+        <path d="M0 414 115 377l83 31 100-103 96 77 105-37 122 70 105-118 95 85 97-54 116 65 98-91 97 69 91-47 80 48v185H0Z" fill="#34202a" opacity=".77"/>
+        <path d="M0 507 130 455l103 39 120-88 107 75 114-35 107 65 104-107 107 82 108-63 112 64 121-94 101 59 166-47v231H0Z" fill="#201a22" opacity=".9"/>
+        <g fill="#18171d" opacity=".92">
+          <path d="M0 475h156v222H0zm169-49h121v271H169zm137 82h176v189H306zm190-96h145v285H496zm157 48h123v237H653zm139-71h174v308H792zm189 88h135v220H981zm150-53h157v273h-157zm171 66h144v207h-144z"/>
+        </g>
+        <g fill="#e98950" opacity=".42">
+          <path d="M28 509h14v29H28zm47 0h14v29H75zm108-38h14v27h-14zm47 0h14v27h-14zm66 66h15v28h-15zm44 0h15v28h-15zm194-75h14v28h-14zm47 0h14v28h-14zm58 77h14v29h-14zm44 0h14v29h-14zm84-99h14v28h-14zm47 0h14v28h-14zm48 102h14v28h-14zm50 0h14v28h-14zm171-54h14v28h-14zm50 0h14v28h-14zm112 64h14v29h-14zm50 0h14v29h-14z"/>
+        </g>
+        <path d="M0 637h1600v123H0Z" fill="#0a0a0f" opacity=".68"/>
+        <path d="M92 0v760M1508 0v760M0 82h1600" stroke="#f7d3b1" stroke-opacity=".10" stroke-width="2"/>
+        <path d="M0 0h1600v760H0Z" fill="url(#glass)"/>
+      </svg>
+
+      <div class="hero-inner">
+        <div class="masthead">
+          <img src="{% url 'comercios:logo' %}" alt="" aria-hidden="true">
+          <p>PLATAFORMA DE GESTIÓN Y PEDIDOS PARA NEGOCIOS DE COMIDA</p>
+        </div>
+
+        <div class="hero-grid">
+          <figure class="product-art">
+            <div class="product-player">
+              <video id="voxcentra-video" autoplay muted loop playsinline preload="auto" aria-label="Video de presentación de VoxCentraAI">
+                <source src="{% url 'comercios:home-video' %}" type="video/mp4">
+                Tu navegador no admite la reproducción de video.
+              </video>
+              <button class="video-play" type="button" aria-label="Activar sonido y continuar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor"/></svg>
+              </button>
+              <figcaption class="video-caption">
+                <span class="video-caption-mark" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 13h3l2-7 4 13 3-10 2 4h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <span class="video-caption-text"><strong>VoxCentraAI</strong><span>Video de presentación</span></span>
+                <span class="video-controls">
+                  <button class="video-control" id="video-toggle" type="button" aria-label="Pausar video">
+                    <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                    <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor"/></svg>
+                  </button>
+                  <button class="video-control" id="video-audio" type="button" aria-label="Activar sonido" aria-pressed="false">
+                    <svg class="muted-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Zm13-1 4 6m0-6-4 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg class="sound-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden><path d="M4 10v4h4l5 4V6l-5 4H4Zm12-1a5 5 0 0 1 0 6m2-9a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </span>
+              </figcaption>
+            </div>
+          </figure>
+
+          <div class="hero-copy">
+            <p class="eyebrow">Una operación más clara, desde el primer contacto</p>
+            <h1 id="hero-title">La voz del cliente, convertida en un <em>pedido claro.</em></h1>
+            <p class="hero-desc">
+              VoxCentraAI reúne comercios, sucursales, menú, clientes y pedidos en una sola plataforma. El proyecto contempla llevar esa organización también a la atención telefónica.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="{% url 'cuentas:login' %}">
+                Entrar al sistema
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+              <a class="button button-secondary" href="#flujo">Conocer el flujo</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="flow" id="flujo" aria-labelledby="flow-title">
+      <div class="flow-head">
+        <h2 id="flow-title">Del contacto a la orden, con cada dato en su sitio</h2>
+        <p>FLUJO PREVISTO DEL PROYECTO</p>
+      </div>
+      <div class="flow-steps">
+        <div class="flow-step"><span class="step-number">01</span><strong>Recibir</strong><span>La solicitud comienza en el canal de atención del negocio.</span></div>
+        <div class="flow-step"><span class="step-number">02</span><strong>Organizar</strong><span>Productos, opciones y datos del pedido quedan estructurados.</span></div>
+        <div class="flow-step"><span class="step-number">03</span><strong>Gestionar</strong><span>El equipo consulta y administra la operación desde el sistema.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>VoxCentraAI · Proyecto académico</span>
+    <span>Gestión para negocios de comida</span>
+  </footer>
+  <script nonce="{{ csp_nonce }}">
+    (() => {
+      const video = document.getElementById("voxcentra-video");
+      const playButton = document.querySelector(".video-play");
+      const toggleButton = document.getElementById("video-toggle");
+      const audioButton = document.getElementById("video-audio");
+      if (!video || !playButton || !toggleButton || !audioButton) return;
+
+      const updatePlaybackControls = () => {
+        const playing = !video.paused && !video.ended;
+        toggleButton.setAttribute("aria-label", playing ? "Pausar video" : "Reproducir video");
+        toggleButton.querySelector(".pause-icon").hidden = !playing;
+        toggleButton.querySelector(".play-icon").hidden = playing;
+      };
+      const updateAudioControl = () => {
+        audioButton.setAttribute("aria-label", video.muted ? "Activar sonido" : "Silenciar video");
+        audioButton.setAttribute("aria-pressed", String(!video.muted));
+        audioButton.querySelector(".muted-icon").hidden = !video.muted;
+        audioButton.querySelector(".sound-icon").hidden = video.muted;
+        playButton.hidden = !video.muted;
+      };
+
+      toggleButton.addEventListener("click", () => {
+        if (video.paused) video.play().catch(() => {});
+        else video.pause();
+      });
+      playButton.addEventListener("click", async () => {
+        video.muted = false;
+        try {
+          if (video.paused) await video.play();
+        } catch {
+          video.muted = true;
+        }
+        updateAudioControl();
+      });
+      audioButton.addEventListener("click", () => {
+        video.muted = !video.muted;
+        updateAudioControl();
+      });
+      video.addEventListener("play", updatePlaybackControls);
+      video.addEventListener("pause", updatePlaybackControls);
+      video.addEventListener("volumechange", updateAudioControl);
+
+      video.muted = true;
+      updatePlaybackControls();
+      updateAudioControl();
+      video.play().catch(() => { playButton.hidden = false; });
+    })();
+  </script>
+</body>
+</html>

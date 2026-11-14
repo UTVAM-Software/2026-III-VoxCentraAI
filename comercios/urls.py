@@ -5,7 +5,11 @@ from comercios import views
 app_name = "comercios"
 
 urlpatterns = [
-    path("", views.ComercioListView.as_view(), name="comercio-list"),
+    path("", views.inicio, name="inicio"),
+    path("voxcentra-logo.png", views.logo, name="logo"),
+    path("voxcentra-home.png", views.home_art, name="home-art"),
+    path("voxcentra-demo.mp4", views.home_video, name="home-video"),
+    path("comercios/", views.ComercioListView.as_view(), name="comercio-list"),
     path("comercios/nuevo/", views.ComercioCreateView.as_view(), name="comercio-create"),
     path("comercios/<int:pk>/editar/", views.ComercioUpdateView.as_view(), name="comercio-update"),
     path("comercios/<int:pk>/eliminar/", views.ComercioDeleteView.as_view(), name="comercio-delete"),
